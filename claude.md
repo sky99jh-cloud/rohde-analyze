@@ -30,6 +30,7 @@
 | `requirements.txt` | `beautifulsoup4`, `lxml`, `openpyxl` |
 | `debug_excel.py` | Excel 마지막 시트 셀/병합 범위 확인용 보조 스크립트 |
 | `info.md` | 기능·매핑 규칙 요구사항 |
+| `sample/` | 예시 HTML·Excel 파일 (`ParamSnapshot_*.html`, `*.xlsx` 등) |
 
 ---
 
@@ -70,7 +71,7 @@ python main.py
 
 ## 참고
 
-- 샘플 HTML: `ParamSnapshot_*.html` (저장소에 포함된 예시).  
+- 샘플 데이터는 **`sample/`** 디렉터리에 있습니다. (`ParamSnapshot_*.html`, 참고용 `*.xlsx` 등)  
 - Excel 템플릿 구조(열·병합)에 맞춰 B열 레이블·특이사항 행이 정의되어 있어야 자동 매핑이 동작합니다.
 
 ---
