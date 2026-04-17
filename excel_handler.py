@@ -13,6 +13,25 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 
+def detect_excel_tx_kind(excel_path: str) -> str:
+    """
+    마지막 시트 초반에 'AMP 6' 열 헤더 셀이 있으면 UHDTV 양식(uhdtv), 없으면 DTV(dtv).
+    """
+    wb = load_workbook(excel_path, read_only=True, data_only=True)
+    try:
+        ws = wb.worksheets[-1]
+        for row in ws.iter_rows(min_row=1, max_row=20, min_col=1, max_col=24):
+            for cell in row:
+                v = cell.value
+                if v is None:
+                    continue
+                if str(v).strip() == "AMP 6":
+                    return "uhdtv"
+        return "dtv"
+    finally:
+        wb.close()
+
+
 # ── 레이블 정규화 헬퍼 ──────────────────────────────────────────────────────
 
 def _normalize(text: str) -> str:
@@ -45,6 +64,42 @@ _AMP_LABEL_MAP: dict[str, str] = {
     _normalize("Power Out [V]"):      "Power Out [V]",
     _normalize("Reflected Out [V]"):  "Reflected Out [V]",
 }
+
+# UHDTV 템플릿 B열(단위 생략)·I Pre / I PRE 구분 — 파서 amp 키로 연결
+_EXACT_AMP_LABEL_TO_KEY: dict[str, str] = {
+    "AMP Temp": "AMP Temp [°C]",
+    "V Aux in": "V Aux in [V]",
+    "V+ Mon": "V+ Mon [V]",
+    "I DC": "I DC [A]",
+    "I Pre": "I Pre [A]",
+    "I PRE": "I PRE [A]",
+    "V5V ACB": "V5V ACB [V]",
+    "V 3V5": "V 3V5 [V]",
+    "V 12Mon": "V 12Mon [V]",
+    "V Pre Mon": "V Pre Mon [V]",
+    "I DRV": "I DRV [A]",
+    "I Drv": "I DRV [A]",
+    "I 1A": "I 1A [A]",
+    "I 2A": "I 2A [A]",
+    "I 3A": "I 3A [A]",
+    "I 1B": "I 1B [A]",
+    "I 2B": "I 2B [A]",
+    "I 3B": "I 3B [A]",
+    "Power A": "Power A [V]",
+    "Power B": "Power B [V]",
+    "Power V Ref": "Power V Ref [V]",
+    "Power Out": "Power Out [V]",
+    "Reflected Out": "Reflected Out [V]",
+}
+
+
+def _resolve_amp_label_key(label: str) -> str | None:
+    """B열 텍스트 → 파서 amp 딕셔너리 키."""
+    s = str(label).strip()
+    if s in _EXACT_AMP_LABEL_TO_KEY:
+        return _EXACT_AMP_LABEL_TO_KEY[s]
+    return _AMP_LABEL_MAP.get(_normalize(s))
+
 
 # 특이사항 레이블 → 파싱 결과 키 매핑
 _SPECIAL_LABEL_MAP: dict[str, str] = {
@@ -114,15 +169,29 @@ def _update_date(sheet: Worksheet, created_on: datetime) -> list[str]:
     return logs
 
 
+def _update_g2_i2_j2_date_row(sheet: Worksheet, created_on: datetime) -> list[str]:
+    """
+    2행 G2(연도)·I2(MM월)·J2(DD일)에 HTML Created on 일시를 반영한다.
+    템플릿은 월을 '03월', 일을 '23일' 형태로 둔다.
+    """
+    sheet["G2"].value = created_on.year
+    sheet["I2"].value = f"{created_on.month:02d}월"
+    sheet["J2"].value = f"{created_on.day:02d}일"
+    return [
+        f"  측정 일자(2행 G2/I2/J2): {created_on.year}년 {created_on.month:02d}월 {created_on.day:02d}일"
+    ]
+
+
 # ── AMP 데이터 갱신 ──────────────────────────────────────────────────────────
 
 def _update_amp_values(sheet: Worksheet, parsed: dict) -> list[str]:
     """
-    B열을 스캔하여 레이블에 맞는 C열(AMP 1), D열(AMP 2) 값을 갱신한다.
+    B열 레이블에 맞춰 C열부터 AMP 1…N 값을 갱신한다.
+    DTV: AMP 2개(C·D열), UHDTV: AMP 6개(C~H열) — parsed[\"amp_count\"]에 따름.
     """
     logs: list[str] = []
-    amp1_data: dict = parsed.get("amp1", {})
-    amp2_data: dict = parsed.get("amp2", {})
+    amp_count = int(parsed.get("amp_count", 2))
+    amp_count = max(1, min(8, amp_count))
 
     for row in sheet.iter_rows(min_row=1, max_row=sheet.max_row):
         b_cell = None
@@ -134,24 +203,22 @@ def _update_amp_values(sheet: Worksheet, parsed: dict) -> list[str]:
         if b_cell is None or b_cell.value is None:
             continue
 
-        norm = _normalize(str(b_cell.value))
-        key = _AMP_LABEL_MAP.get(norm)
+        key = _resolve_amp_label_key(str(b_cell.value))
         if key is None:
             continue
 
         row_num = b_cell.row
-        val1 = amp1_data.get(key)
-        val2 = amp2_data.get(key)
-
-        if val1 is not None:
-            c_cell = sheet.cell(row=row_num, column=3)
-            c_cell.value = val1
-            logs.append(f"  AMP1 [{key}] → {sheet.cell(row=row_num, column=3).coordinate} = {val1}")
-
-        if val2 is not None:
-            d_cell = sheet.cell(row=row_num, column=4)
-            d_cell.value = val2
-            logs.append(f"  AMP2 [{key}] → {sheet.cell(row=row_num, column=4).coordinate} = {val2}")
+        for amp_n in range(1, amp_count + 1):
+            amp_data: dict = parsed.get(f"amp{amp_n}", {})
+            if not isinstance(amp_data, dict):
+                continue
+            val = amp_data.get(key)
+            if val is None:
+                continue
+            col = 2 + amp_n
+            sheet.cell(row=row_num, column=col).value = val
+            coord = sheet.cell(row=row_num, column=col).coordinate
+            logs.append(f"  AMP{amp_n} [{key}] → {coord} = {val}")
 
     return logs
 
@@ -244,8 +311,8 @@ def _update_power_cells(sheet: Worksheet, parsed: dict) -> list[str]:
 # ── 시트 이름 갱신 (날짜 기반) ───────────────────────────────────────────────
 
 def _make_sheet_name(workbook: openpyxl.Workbook, created_on: datetime) -> str:
-    """날짜 기반 시트 이름 생성. 중복 방지."""
-    base = created_on.strftime("%Y-%m-%d")
+    """연·월 기반 시트 이름(YYYY-MM). 동일 월에 여러 시트면 _1, _2 … 로 구분."""
+    base = created_on.strftime("%Y-%m")
     existing = {ws.title for ws in workbook.worksheets}
     if base not in existing:
         return base
@@ -298,25 +365,36 @@ def update_excel(excel_path: str, parsed: dict, log_callback=None) -> str:
         logs = _update_date(new_sheet, created_on)
         for msg in logs:
             log(msg)
+        logs = _update_g2_i2_j2_date_row(new_sheet, created_on)
+        for msg in logs:
+            log(msg)
 
     # F3 / I3 Power 셀 갱신
     logs = _update_power_cells(new_sheet, parsed)
     for msg in logs:
         log(msg)
 
-    # AMP 1 / AMP 2 데이터 갱신
+    # AMP 1 … N 데이터 갱신
     logs = _update_amp_values(new_sheet, parsed)
     for msg in logs:
         log(msg)
 
-    # 특이사항 갱신
-    logs = _update_special_values(new_sheet, parsed)
-    for msg in logs:
-        log(msg)
+    # 특이사항 갱신 (DTV만 — UHDTV는 Non Linear / Linear 항목을 기입하지 않음)
+    amp_n = int(parsed.get("amp_count", 2))
+    if amp_n < 6:
+        logs = _update_special_values(new_sheet, parsed)
+        for msg in logs:
+            log(msg)
+    else:
+        log("  특이사항(Non Linear / Linear): UHDTV — 생략")
 
     # 마지막 시트를 활성 시트로 설정
     workbook.active = new_sheet
     log(f"활성 시트 설정: '{new_sheet.title}'")
+
+    # 새 시트 표시 확대/축소 (저장 후 Excel에서 열 때 적용)
+    new_sheet.sheet_view.zoomScale = 85
+    log("표시 확대/축소: 85%")
 
     # 저장
     workbook.save(excel_path)

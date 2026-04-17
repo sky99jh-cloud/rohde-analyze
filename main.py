@@ -1,15 +1,14 @@
 """
-로데 & 슈바르츠 TX-A 로그 분석기
+ROHDE 송신기 로그 분석기
 HTML 파라미터 스냅샷을 파싱하여 Excel 파일에 측정 데이터를 기록한다.
 """
 
 import threading
 import tkinter as tk
-from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
-from excel_handler import update_excel
-from html_parser import parse_html
+from excel_handler import detect_excel_tx_kind, update_excel
+from html_parser import detect_html_tx_kind, parse_html
 
 
 # ── 색상 / 폰트 상수 ────────────────────────────────────────────────────────
@@ -28,14 +27,15 @@ FONT_MONO    = ("Consolas", 9)
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("로데 & 슈바르츠 TX-A 로그 분석기")
-        self.geometry("720x540")
-        self.minsize(600, 460)
+        self.title("ROHDE 송신기 로그 분석기")
+        self.geometry("720x580")
+        self.minsize(600, 500)
         self.configure(bg=BG_COLOR)
         self.resizable(True, True)
 
         self._html_path = tk.StringVar()
         self._excel_path = tk.StringVar()
+        self._tx_mode = tk.StringVar(value="dtv")
 
         self._build_ui()
 
@@ -48,7 +48,7 @@ class App(tk.Tk):
         header.pack_propagate(False)
         tk.Label(
             header,
-            text="로데 & 슈바르츠  TX-A  로그 분석기",
+            text="ROHDE 송신기 로그 분석기",
             bg=ACCENT_COLOR, fg="white",
             font=FONT_TITLE,
         ).pack(side="left", padx=20, pady=14)
@@ -56,6 +56,22 @@ class App(tk.Tk):
         # 메인 컨테이너
         main = tk.Frame(self, bg=BG_COLOR, padx=20, pady=16)
         main.pack(fill="both", expand=True)
+
+        mode_frame = tk.LabelFrame(
+            main, text=" 분석 모드 ", bg=BG_COLOR,
+            font=FONT_BOLD, fg=ACCENT_COLOR, padx=12, pady=8,
+        )
+        mode_frame.pack(fill="x", pady=(0, 10))
+        tk.Radiobutton(
+            mode_frame, text="DTV (AMP 2개)",
+            variable=self._tx_mode, value="dtv",
+            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+        ).pack(side="left", padx=(4, 20))
+        tk.Radiobutton(
+            mode_frame, text="UHDTV (AMP 6개)",
+            variable=self._tx_mode, value="uhdtv",
+            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+        ).pack(side="left", padx=4)
 
         # 파일 선택 프레임
         file_frame = tk.LabelFrame(
@@ -131,20 +147,52 @@ class App(tk.Tk):
 
     # ── 파일 탐색 ───────────────────────────────────────────────────────────
 
+    def _html_matches_mode(self, path: str) -> bool:
+        """현재 분석 모드와 HTML 종류가 일치하면 True. 불일치·읽기 실패 시 경고 후 False."""
+        try:
+            file_kind = detect_html_tx_kind(path)
+        except OSError as exc:
+            messagebox.showerror("파일 오류", f"HTML 파일을 읽을 수 없습니다.\n{exc}")
+            return False
+        want_uhdtv = self._tx_mode.get() == "uhdtv"
+        if want_uhdtv and file_kind == "dtv":
+            messagebox.showwarning("경고", "UHDTV파일을 선택해 주세요")
+            return False
+        if not want_uhdtv and file_kind == "uhdtv":
+            messagebox.showwarning("경고", "DTV파일을 선택해 주세요")
+            return False
+        return True
+
+    def _excel_matches_mode(self, path: str) -> bool:
+        """현재 분석 모드와 Excel 양식이 일치하면 True. 불일치·읽기 실패 시 경고 후 False."""
+        try:
+            file_kind = detect_excel_tx_kind(path)
+        except Exception as exc:
+            messagebox.showerror("파일 오류", f"Excel 파일을 읽을 수 없습니다.\n{exc}")
+            return False
+        want_uhdtv = self._tx_mode.get() == "uhdtv"
+        if want_uhdtv and file_kind == "dtv":
+            messagebox.showwarning("경고", "UHDTV용 Excel 파일을 선택해 주세요")
+            return False
+        if not want_uhdtv and file_kind == "uhdtv":
+            messagebox.showwarning("경고", "DTV용 Excel 파일을 선택해 주세요")
+            return False
+        return True
+
     def _browse(self, kind: str):
         if kind == "html":
             path = filedialog.askopenfilename(
                 title="HTML 파일 선택",
                 filetypes=[("HTML 파일", "*.html *.htm"), ("모든 파일", "*.*")],
             )
-            if path:
+            if path and self._html_matches_mode(path):
                 self._html_path.set(path)
         else:
             path = filedialog.askopenfilename(
                 title="Excel 파일 선택",
                 filetypes=[("Excel 파일", "*.xlsx *.xlsm"), ("모든 파일", "*.*")],
             )
-            if path:
+            if path and self._excel_matches_mode(path):
                 self._excel_path.set(path)
 
     # ── 로그 출력 ───────────────────────────────────────────────────────────
@@ -172,6 +220,11 @@ class App(tk.Tk):
         if not excel_path:
             messagebox.showwarning("파일 미선택", "Excel 파일을 선택해 주세요.")
             return
+        # HTML/Excel은 찾아보기에서 검증하지만, 분석 모드를 바꾼 뒤에도 불일치 가능
+        if not self._html_matches_mode(html_path):
+            return
+        if not self._excel_matches_mode(excel_path):
+            return
 
         self._run_btn.configure(state="disabled")
         self._log_clear()
@@ -189,7 +242,11 @@ class App(tk.Tk):
             self.after(0, self._log, "━━━ HTML 파싱 시작 ━━━", "info")
             self.after(0, self._log, f"  파일: {html_path}")
 
-            parsed = parse_html(html_path)
+            num_amps = 6 if self._tx_mode.get() == "uhdtv" else 2
+            mode_label = "UHDTV (AMP 6)" if num_amps == 6 else "DTV (AMP 2)"
+            self.after(0, self._log, f"  모드: {mode_label}", "info")
+
+            parsed = parse_html(html_path, num_amplifiers=num_amps)
 
             created_on = parsed.get("created_on")
             if created_on:
@@ -202,10 +259,10 @@ class App(tk.Tk):
             if ref is not None:
                 self.after(0, self._log, f"  Reflected Power: {ref} W", "detail")
 
-            amp1 = parsed.get("amp1", {})
-            amp2 = parsed.get("amp2", {})
-            self.after(0, self._log, f"  AMP1 추출 항목: {len([v for v in amp1.values() if v is not None])}개", "detail")
-            self.after(0, self._log, f"  AMP2 추출 항목: {len([v for v in amp2.values() if v is not None])}개", "detail")
+            for n in range(1, num_amps + 1):
+                amp = parsed.get(f"amp{n}", {})
+                cnt = len([v for v in amp.values() if v is not None]) if isinstance(amp, dict) else 0
+                self.after(0, self._log, f"  AMP{n} 추출 항목: {cnt}개", "detail")
 
             self.after(0, self._log, "━━━ Excel 갱신 시작 ━━━", "info")
 

@@ -1,0 +1,2625 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" >
+<title>Parameter Snapshot</title>
+<style>
+*{ font-family: "arial", sans-serif;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 12px;
+}
+body{
+    background-color: #dbe2e6;
+    margin-top: 0px;
+}
+
+header{
+    background-color: #006599;
+    width: 100%;
+    height: 106px;
+    position:fixed;
+    font-size: 24px;
+}
+.logo{
+    width: 100%;
+}
+table {
+    border-collapse: collapse;
+    max-width: 50%;
+    caption-side: top;
+}
+caption{
+    background-color: #c3ced5;
+    font-weight: bold;
+    margin: 0px;
+    text-align: left;
+    padding: 5px 0px 5px 10px;
+}
+table, th, td {
+    border: 0px solid black;
+    padding: 2px 0px 2px 10px;
+    margin: 0px 0px 20px 0px;
+} 
+.key{ 
+      background-color: #abbac4;
+      min-width: 200px;
+}
+.val{ 
+      background-color: #f3f5f7;
+      min-width: 220px;
+}
+.decoLine{ 
+      background-color: #abbac4;
+      font-weight: bold;
+      padding: 8px 0px 3px 10px;
+}
+.ro{ 
+     background-color: #c3ced5;
+     min-width: 150px;
+}
+.content{
+    position: absolute;
+    left: 460px;
+    top:20px;
+    margin-top: 100px;
+    float: left;
+    z-index: -1;
+}
+.nav
+{
+    background-color:#f3f5f7;
+    width:435px;
+    max-height: 1250px;
+    *box-shadow: 0px 1px 50px #5E5E5E;
+    position:fixed;
+    top:120px;
+    float: left;
+    overflow:auto;
+}
+.anchor:before{
+    content:"";
+    display:block;
+    padding-top: 120px;
+    margin: -120px 0 0;
+}
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    overflow:auto;
+}
+li {
+    border-bottom: 1px solid #90bade;
+    margin: 0;
+}
+a {
+    display: block;
+    padding: 4px 15px 5px 15px;
+    background-color: #2175bc;
+    color: #fff;
+    text-decoration: none;
+    width: auto;
+}
+li a:hover {
+    background-color: #2586d7;
+    color: #fff;
+}
+a:active {
+    color: #00AFCC;
+}
+@media screen and (max-height: 1320px) {
+    .nav {
+        max-height: 1000px;
+    }
+}
+@media screen and (max-height: 1120px) {
+    .nav {
+        max-height: 840px;
+    }
+}
+@media screen and (max-height: 960px) {
+    .nav {
+        max-height: 745px;
+    }
+}
+@media screen and (max-height: 867px) {
+    .nav {
+        max-height: 640px;
+    }
+}
+@media screen and (max-height: 768px) {
+    .nav {
+        max-height: 475px;
+    }
+}
+@media screen and (max-height: 600px) {
+    .nav {
+        max-height: 350px;
+    }
+}
+@media screen and (max-height: 480px) {
+    .nav {
+        max-height: 300px;
+    }
+}
+@media screen and (max-width: 930px) {
+    .nav, .navspace {
+        display: none;
+    }
+    .content{
+        left: 0px;
+    }
+    .val{
+        min-width: 200px;
+    }
+}
+@media print {
+    @-moz-document url-prefix() { 
+        header {
+            *display: inline;
+            display: none;
+        }
+    }  
+    caption:before{
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        border:80px #c3ced5 solid;
+        z-index: -1;
+    }
+    caption{
+        position: relative ;
+        overflow: hidden;
+        z-index: 1;
+    }
+    body{
+        background-color: #fff;
+    }
+    header{
+        background-color: #006599;
+        width: 800px;
+    }
+    .nav, .navspace {
+        display: none;
+    }
+    
+    .anchor:before{
+        content:"";
+        display:block;
+        padding-top: 0px;
+        margin: 0px 0 0;
+    } 
+    .content{
+        left: 0px;
+    }
+    table{
+        border-collapse: collapse;
+        width: 800px;
+        caption-side: top;
+        padding: 3px 0px 13px 0px;
+        page-break-inside: avoid;
+    }
+    .key{ 
+        background-color: #fff;
+        width: 150px;
+    }
+    .val{ 
+        background-color: #fff;
+        min-width: 220px;
+    }
+    .header{
+        background-color: #fff;
+        font-weight: bold;
+        padding: 8px 0px 3px 10px;
+
+    }
+    .ro{
+        background-color: #fff;
+        min-width: 150px;
+    }
+}
+</style>
+</head>
+<body>
+<header>
+            <svg class="logo">
+            <rect id="rect2996-08" height="105.78" width="730.14" y="0.000025635" x="-4.3652E-8" fill="#006599"/>
+            <rect id="rect2996-09" height="92.029" width="362.6" y="7" x="0.4808" fill="#b6bcc1"/>
+            <rect id="rect2996-10" height="92.029" width="6"   y="7" x="364.04" fill="#b6bcc1"/>
+            <rect id="rect2996-11" height="92.029" width="5"   y="7" x="371.13" fill="#b6bcc1"/>
+            <rect id="rect2996-12" height="92.029" width="5"   y="7" x="378.14" fill="#b6bcc1"/>
+            <rect id="rect2996-13" height="92.029" width="5"   y="7" x="385.11" fill="#b6bcc1"/>
+            <rect id="rect2996-14" height="92.029" width="5"   y="7" x="393.19" fill="#b6bcc1"/>
+            <rect id="rect2996-15" height="92.029" width="5"   y="7" x="401.09" fill="#b6bcc1"/>
+            <rect id="rect2996-16" height="92.029" width="5"   y="7" x="409.09" fill="#b6bcc1"/>
+            <rect id="rect2996-17" height="92.029" width="5"   y="7" x="418.22" fill="#b6bcc1"/>
+            <rect id="rect2996-18" height="92.029" width="4"   y="7" x="427.17" fill="#b6bcc1"/>
+            <rect id="rect2996-19" height="92.029" width="4"   y="7" x="436.06" fill="#b6bcc1"/>
+            <rect id="rect2996-20" height="92.029" width="3.3" y="7" x="445.92" fill="#b6bcc1"/>
+            <rect id="rect2996-21" height="92.029" width="3.1" y="7" x="456.04" fill="#b6bcc1"/>
+            <rect id="rect2996-22" height="92.029" width="2.6" y="7" x="467.13" fill="#b6bcc1"/>
+            <rect id="rect2996-23" height="92.029" width="2"   y="7" x="481.14" fill="#b6bcc1"/>
+            <rect id="rect2996-24" height="92.029" width="2"   y="7" x="496.13" fill="#b6bcc1"/>
+            <rect id="rect2996-25" height="92.029" width="2"   y="7" x="516.18" fill="#b6bcc1"/>
+            <rect id="rect2996-26" height="92.029" width="1.7" y="7" x="541.14" fill="#b6bcc1"/>
+            <rect id="rect2996-27" height="92.029" width="0.9" y="7" x="572.23" fill="#b6bcc1"/>
+            <rect id="rect2996-28" height="92.029" width="0.9" y="7" x="613.15" fill="#b6bcc1"/>
+            <rect id="rect2996-29" height="92.029" width="0.9" y="7" x="666.08" fill="#b6bcc1"/>
+            <rect id="rect2996-30" height="92.029" width="0.9" y="7" x="727.18" fill="#b6bcc1"/>
+            <path id="path3058-8" fill="#00a0dd" d="m130.62,78.955c-3.1204-0.7514-5.1309-4.0041-4.3156-6.982,0.27535-1.0056,1.5726-2.559,3.0159-3.6115,0.5854-0.4269,0.60726-0.4907,0.32873-0.9603-0.72176-1.2169-0.84882-1.6479-0.85004-2.8835-0.002-1.76,0.83881-3.0976,2.5071-3.9897,1.0873-0.5814,1.2632-0.6102,3.24-0.5306,1.6195,0.065,2.2845,0.1877,2.9524,0.5441,3.0372,1.6205,3.1641,5.4454,0.26585,8.0109l-1.1279,0.9984,0.65735,0.6776,0.65735,0.6776,0.35959-0.5612c0.34587-0.5398,0.43447-0.5612,2.3214-0.5612,1.9417,0,1.9618,0.01,1.9618,0.5229,0,0.2875-0.37626,1.2663-0.83612,2.175-0.45987,0.9087-0.83613,1.7395-0.83613,1.8462,0,0.1066,0.70549,1.0374,1.5677,2.0683,0.86225,1.0309,1.5677,1.9847,1.5677,2.1196,0,0.1723-0.83481,0.2452-2.8068,0.2452-2.7449,0-2.8158-0.012-3.2178-0.5343-0.5083-0.6608-0.59477-0.6609-1.8471,0-1.6531,0.8705-3.8078,1.153-5.5654,0.7298zm3.3208-4.3964c0.71361-0.4781,0.627-0.9032-0.42207-2.0717-0.79645-0.887-0.98037-0.9963-1.3425-0.7982-0.75999,0.4159-1.3239,1.3402-1.1787,1.9319,0.34947,1.4237,1.6158,1.8273,2.9432,0.938zm1.1127-8.9718c0.23828-0.3097,0.43323-0.759,0.43323-0.9984,0-1.1241-1.5584-1.6538-2.183-0.742-0.41854,0.611-0.40959,0.7705,0.0904,1.609,0.50448,0.846,1.0749,0.8912,1.6594,0.1314zm-86.558,12.978c-1.5654-0.5119-2.4188-1.0732-3.6082-2.3735-3.2386-3.5403-3.1232-10.197,0.23638-13.632,3.7677-3.8526,10.789-3.3011,13.721,1.0778,2.9457,4.3996,1.9636,11.012-2.0554,13.84-2.0904,1.4706-5.6822,1.9417-8.2934,1.0878zm4.149-4.3058c1.665-0.6432,2.4674-2.4373,2.3256-5.1997-0.13146-2.5611-0.96354-3.9024-2.745-4.4248-1.5223-0.4464-3.3493,0.7747-3.8827,2.595-0.3766,1.2854-0.33558,3.8077,0.07839,4.8209,0.80072,1.9596,2.5291,2.8633,4.2237,2.2086zm99.54,4.2352c-2.724-0.9744-4.3645-2.937-4.3645-5.2217v-0.7226l2.6468,0.06,2.6468,0.06,0.22737,0.6878c0.40596,1.228,0.79613,1.4496,2.5526,1.4496,1.4178,0,1.6205-0.053,1.9882-0.5171,0.97805-1.235,0.1143-1.9441-3.7838-3.1063-4.3985-1.3113-5.6427-2.4676-5.6455-5.2469-0.002-2.5598,1.2766-4.3929,3.7571-5.3841,0.90515-0.3618,1.6165-0.4622,3.3445-0.4725,2.5471-0.015,4.0361,0.3639,5.3673,1.366,1.0347,0.7789,1.9488,2.504,1.9488,3.6776v0.813h-2.3985-2.3985l-0.32245-0.6376c-0.44911-0.888-1.4231-1.3585-2.5447-1.2292-1.0862,0.1251-1.5332,0.4599-1.5332,1.148,0,0.7328,0.90898,1.2193,3.5232,1.8858,4.7891,1.2208,6.5103,2.6976,6.5103,5.586,0,1.844-0.38011,2.8328-1.5634,4.0672-1.507,1.5722-2.8416,2.0453-6.0663,2.1505-2.2111,0.072-2.6724,0.023-3.8923-0.4131zm20.406,0.1924c-1.1879-0.4013-2.445-1.091-3.2484-1.7823-1.1114-0.9562-2.2254-2.9151-2.59-4.5544-1.101-4.9496,0.68094-9.6427,4.3299-11.404,3.1948-1.5418,7.6297-1.1799,9.901,0.8081,1.0583,0.9263,2.145,2.9974,2.3072,4.3971l0.12526,1.0815-2.5769-0.06-2.5769-0.06-0.4317-0.8368c-0.60432-1.1713-1.3702-1.6925-2.4873-1.6925-1.2816,0-2.2052,0.6126-2.8475,1.8889-0.454,0.9021-0.5317,1.3384-0.5317,2.9858,0,1.6306,0.0809,2.0949,0.52258,2.9978,0.29765,0.6086,0.83747,1.2837,1.2542,1.5687,1.4518,0.9927,3.7258,0.1695,4.0794-1.4768,0.21148-0.9845,0.48674-1.0722,3.1618-1.007l2.4787,0.06-0.058,0.9619c-0.13188,2.1854-1.8597,4.5034-4.1939,5.6265-1.2443,0.5987-1.6245,0.6755-3.5867,0.7248-1.3986,0.035-2.4981-0.047-3.031-0.2274zm-149.14-9.2313,0-9.1049,6.1142,0.069c5.3402,0.06,6.22,0.1174,6.9503,0.4528,1.8735,0.8605,3.0193,2.6169,3.0252,4.6372,0.0057,1.7277-0.35122,2.7665-1.2714,3.7074-0.44725,0.4573-0.81318,0.8996-0.81318,0.9828,0,0.083,0.24794,0.3846,0.55098,0.6696,0.84702,0.7966,1.3383,2.1618,1.555,4.3208,0.10863,1.0826,0.25408,2.281,0.32323,2.663l0.12575,0.6947h-2.6413c-3.0695,0-2.8916,0.1448-3.1508-2.5649-0.30032-3.1398-0.82814-3.684-3.4808-3.5892l-1.7477,0.062-0.10451,2.9924-0.10452,2.9923-2.6651,0.06-2.6651,0.06v-9.1049zm10.261-1.7789c0.47982-0.6064,0.51454-1.4763,0.08404-2.1049-0.38457-0.5614-2.1021-0.9687-3.6925-0.8756l-1.1135,0.065-0.06253,1.475c-0.09214,2.1737-0.17126,2.1036,2.2771,2.0183,1.9186-0.067,2.144-0.1188,2.5074-0.578zm30.389,10.61c-0.05657-0.1507-0.0782-4.2175-0.04824-9.0372l0.05465-8.7632h2.6129,2.6129l0.05858,2.8714c0.03408,1.6707,0.15404,2.989,0.28688,3.1527,0.16159,0.199,0.85474,0.2812,2.3719,0.2812s2.2103-0.082,2.3719-0.2812c0.13283-0.1637,0.25279-1.482,0.28689-3.1527l0.05858-2.8714h2.6129,2.6129v8.9771,8.9772h-2.6129-2.6129l-0.10452-3.4199-0.10452-3.4199h-2.5084-2.5084l-0.10452,3.4199-0.10451,3.4199-2.5647,0.06c-1.9365,0.045-2.5899-0.01-2.6675-0.214zm21.325,0.01c-0.05848-0.1559-0.08174-4.2268-0.05169-9.0466l0.05465-8.7632h5.4348c4.7018,0,5.5808,0.052,6.5171,0.3861,3.2402,1.1559,4.9303,4.0519,4.9513,8.4842,0.0215,4.5545-1.5975,7.3178-5.093,8.6927-0.78104,0.3071-1.8539,0.3835-6.3238,0.45-4.3329,0.064-5.4039,0.025-5.4895-0.2032zm9.8645-4.9978c0.96223-0.7176,1.5314-2.1049,1.526-3.7198-0.0101-3.0743-1.6388-4.6324-4.6558-4.4542l-1.088,0.064-0.057,4.0546c-0.0314,2.2299-0.008,4.1875,0.0539,4.3501,0.18532,0.4938,3.471,0.2642,4.2208-0.295zm10.616,4.9846c-0.0558-0.1486-0.0768-4.2136-0.0468-9.0334l0.0547-8.7632h7.2116,7.2116v2.2443,2.2443l-4.4942,0.1068-4.4942,0.1069v1.0687,1.0687l4.0761,0.1069,4.0761,0.1069v2.0305,2.0306l-4.0761,0.1069-4.0761,0.1068v0.9619,0.9618l4.5987,0.1069,4.5987,0.1068v2.2443,2.2443l-7.2694,0.056c-5.706,0.044-7.2912,0-7.3707-0.2139zm81.733,0c-0.0566-0.1507-0.0782-4.2174-0.0482-9.0372l0.0547-8.7632h2.6129,2.6129l0.0586,2.8714c0.0341,1.6708,0.15405,2.989,0.28688,3.1527,0.16158,0.1991,0.85473,0.2813,2.3719,0.2813s2.2104-0.082,2.3719-0.2813c0.13283-0.1637,0.25278-1.4819,0.28688-3.1527l0.0586-2.8714h2.6129,2.6129v8.9771,8.9772h-2.6129-2.6129l-0.1045-3.4199-0.10452-3.4198h-2.5084-2.5084l-0.10452,3.4198-0.10451,3.4199-2.5647,0.06c-1.9366,0.045-2.5899-0.01-2.6675-0.214zm24.466-0.01c-0.51151-1.5452-4.6566-17.596-4.5778-17.727,0.0579-0.096,1.2308-0.1742,2.6065-0.1742,2.4027,0,2.5081,0.019,2.676,0.4809,0.0961,0.2645,0.57851,2.621,1.0719,5.2367s0.9725,4.7558,1.0647,4.7558,0.23212-0.3515,0.31092-0.7811c0.0789-0.4296,0.52988-2.762,1.0024-5.1832l0.85907-4.4022,2.2815-0.061c1.2548-0.034,2.3588,0.018,2.4533,0.1147,0.0945,0.097,0.54821,2.2402,1.0082,4.7633,1.0083,5.5307,1.0124,5.5495,1.2388,5.5495,0.0992,0,0.61482-2.2697,1.1459-5.0437,0.53107-2.774,1.0181-5.1305,1.0822-5.2367,0.153-0.2531,5.0488-0.2513,5.2019,0,0.11227,0.1858-4.2545,16.488-4.6854,17.492-0.19744,0.4599-0.31483,0.4809-2.6937,0.4809-1.7427,0-2.5477-0.08-2.6893-0.2672-0.1111-0.1469-0.55357-2.3349-0.98323-4.8622-0.42966-2.5272-0.82215-4.6369-0.87221-4.6881-0.26208-0.2679-0.4987,0.6899-1.1315,4.5808-0.38241,2.3512-0.77115,4.4913-0.86387,4.7558-0.16267,0.464-0.26067,0.4809-2.7932,0.4809-1.9132,0-2.6486-0.072-2.713-0.2672zm20.505,0.091c-0.0628-0.104,1.3212-4.1706,3.0756-9.0369l3.1899-8.8477,2.657-0.06,2.657-0.06,0.3124,0.701c0.74007,1.6609,6.1457,17.128,6.0446,17.295-0.18346,0.3035-5.2592,0.2294-5.4571-0.08-0.093-0.1453-0.3102-0.6983-0.48265-1.229l-0.31355-0.9649-2.6346-0.06c-2.9552-0.067-2.9532-0.068-3.3906,1.4791l-0.2635,0.9317-2.6402,0.06c-1.4521,0.033-2.6916-0.025-2.7544-0.1294zm10.403-6.4064c0.17678-0.2926-1.176-4.7632-1.4165-4.6812-0.27257,0.093-1.6278,4.4002-1.4678,4.665,0.14141,0.2339,2.7438,0.2485,2.8842,0.016zm11.098,6.3222c-0.0566-0.1507-0.0782-4.2175-0.0482-9.0372l0.0547-8.7632h6.0774,6.0774l1.2306,0.6439c1.8011,0.9424,2.4707,2.0052,2.5734,4.085,0.0963,1.9492-0.30574,3.1923-1.3759,4.2551l-0.73818,0.733,0.76889,0.8703c0.42287,0.4786,0.86997,1.1297,0.99351,1.4468,0.18031,0.4628,0.75426,4.6331,0.79275,5.7599,0.007,0.1999-0.64549,0.2672-2.5914,0.2672-1.4303,0-2.6494-0.081-2.709-0.1796-0.0597-0.099-0.21555-1.0846-0.34639-2.1908-0.27166-2.2969-0.60015-3.2632-1.2258-3.6055-0.25569-0.1399-1.1958-0.2136-2.2648-0.1775l-1.8276,0.062-0.10452,2.9924-0.10451,2.9924-2.5647,0.06c-1.9365,0.045-2.5899-0.01-2.6675-0.214zm10.023-10.451c0.47057-0.3785,0.55138-0.5916,0.49851-1.3145-0.0911-1.2459-0.68985-1.6258-2.8279-1.7944-2.211-0.1743-2.3565-0.061-2.3565,1.8413,0,0.7889,0.0626,1.4985,0.13936,1.5768,0.0766,0.078,1.0046,0.1425,2.0621,0.1425,1.6407,0,2.0052-0.066,2.4844-0.4517zm10.086,10.569c-0.0767-0.078-0.13729-1.0643-0.13476-2.1909l0.005-2.0484,3.8625-4.2691c2.1244-2.348,3.8625-4.3896,3.8625-4.5369,0-0.2021-0.88608-0.2823-3.6058-0.3264l-3.6058-0.058v-2.2443-2.2443h7.4206,7.4206l0.0593,2.0415,0.0593,2.0416-3.8674,4.3707c-2.1271,2.4039-3.8704,4.491-3.8742,4.6379-0.006,0.2049,0.94426,0.2672,4.0694,0.2672h4.0761v2.3512,2.3511h-7.8038c-4.2921,0-7.8666-0.064-7.9432-0.1425zm-242-27.109l-8.882-9.084,8.882-9.084,8.882-9.084,8.8325,9.0297c4.8579,4.9663,8.8325,9.1267,8.8325,9.2453,0,0.21129-17.355,18.061-17.56,18.061-0.05752,0-4.1014-4.0878-8.9865-9.084zm11.86,2.4076c1.5249-1.556,2.7725-2.9026,2.7725-2.9924s-0.5674-0.16328-1.2609-0.16328c-0.69349,0-1.5713-0.13261-1.9507-0.29471-0.90203-0.38538-1.6332-1.3476-1.5538-2.0448,0.05025-0.44128,0.1903-0.55872,0.72979-0.61212,0.55849-0.0553,0.7195,0.0365,0.98517,0.56189,0.17467,0.34538,0.46986,0.68771,0.65596,0.76073,0.63971,0.25102,1.9449,0.1345,2.2751-0.2031,0.72742-0.74382,0.15747-1.3693-1.6573-1.8188-1.9069-0.47234-2.8219-1.2099-2.8219-2.2746,0-0.63361-0.37643-0.61561-1.2658,0.0605-0.39597,0.30102-1.3581,0.89176-2.138,1.3127-1.4664,0.7915-3.3731,2.5302-3.9003,3.5566l-0.30161,0.58719,3.1209,3.1966c1.7165,1.7581,3.2149,3.1966,3.3298,3.1966,0.11486,0,1.4565-1.2731,2.9813-2.8291zm8.0478-8.2292c1.5823-1.6148,2.8769-3.0829,2.8769-3.2623,0-0.17943-1.3542-1.7085-3.0094-3.398-3.4829-3.555-3.3282-3.5079-5.1849-1.58-1.0235,1.0626-2.8843,4.0175-2.8843,4.5801,0,0.10128,0.61609,0.18414,1.3691,0.18414,1.6119,0,2.4584,0.37743,2.9276,1.3054,0.43554,0.86124,0.26217,1.2595-0.54827,1.2595-0.45746,0-0.83052-0.19289-1.2401-0.64122-0.86651-0.94851-2.2993-0.7602-2.2993,0.3022,0,0.54844,0.29356,0.70913,2.3732,1.2992,1.5272,0.43327,2.2255,1.1014,2.2255,2.1294,0,0.45953,0.10178,0.75781,0.25858,0.75781,0.14221,0,1.5532-1.3212,3.1355-2.9361zm-18.479,1.5644c0.76986-1.0962,2.7576-2.684,4.4602-3.5628,0.65346-0.3373,1.2484-0.71305,1.3221-0.83501,0.19643-0.32501-0.3274-2.6098-0.70085-3.0568-0.25107-0.30054-0.57145-0.36988-1.4815-0.32062l-1.1612,0.0628-0.10451,1.4962-0.10451,1.4962h-0.73161-0.73162l-0.05733-3.5802c-0.04221-2.6336-0.12443-3.5802-0.31116-3.5802-0.38414,0-6.8431,6.6764-6.8431,7.0735,0,0.3469,5.2639,5.751,5.6019,5.751,0.09908,0,0.47855-0.42488,0.84325-0.94416zm8.5325-7.4459c0.3535-0.61717,0.88125-1.555,1.1728-2.084,0.29151-0.52901,1.1509-1.571,1.9098-2.3155,0.75888-0.7445,1.3798-1.4646,1.3798-1.6001,0-0.30171-5.2408-5.7028-5.5335-5.7028-0.30786,0-5.7542,5.6112-5.7542,5.9284,0,0.19658,0.48558,0.27014,1.7835,0.27014,1.9692,0,2.987,0.31626,3.5195,1.0937,0.4622,0.67476,0.42782,1.8571-0.07868,2.7066-0.36758,0.61649-0.3831,0.75829-0.1286,1.1756,0.15918,0.26099,0.34943,0.73904,0.42277,1.0623,0.19896,0.87692,0.59017,0.71697,1.3069-0.53436zm-3.391-1.993c0.18066-0.18473,0.32848-0.5626,0.32848-0.8397,0-0.79197-0.53691-1.1756-1.6454-1.1756-1.1549,0-1.4901,0.26441-1.4901,1.1756,0,0.36443,0.11288,0.77801,0.25084,0.91909,0.37091,0.37926,2.162,0.32364,2.5562-0.0794z"/>
+            </svg>
+</header>
+<div class="body">
+<nav class="nav">
+<ul>
+<li><a href="#1">System</a></li>
+<li><a href="#2">Automatic » n+1 Automatic</a></li>
+<li><a href="#3">Automatic » Program Priorities</a></li>
+<li><a href="#4">Cooling » Rack 1</a></li>
+<li><a href="#5">Cooling » Rack 1 » Sensors » Sensors</a></li>
+<li><a href="#6">Cooling » Rack 1 » Fan 1 » Status</a></li>
+<li><a href="#7">Cooling » Rack 1 » Fan 2 » Status</a></li>
+<li><a href="#8">Cooling » Rack 1 » Pump 1 » Status</a></li>
+<li><a href="#9">Cooling » Rack 1 » Pump 2 » Status</a></li>
+<li><a href="#10">Cooling » Rack 1 » Cooling Setup</a></li>
+<li><a href="#11">Cooling » Rack 1 » Fan Control</a></li>
+<li><a href="#12">Cooling » Rack 1 » Scan Devices</a></li>
+<li><a href="#13">Cooling » Rack 2</a></li>
+<li><a href="#14">Cooling » Rack 2 » Sensors » Sensors</a></li>
+<li><a href="#15">Cooling » Rack 2 » Fan 1 » Status</a></li>
+<li><a href="#16">Cooling » Rack 2 » Fan 2 » Status</a></li>
+<li><a href="#17">Cooling » Rack 2 » Pump 1 » Status</a></li>
+<li><a href="#18">Cooling » Rack 2 » Pump 2 » Status</a></li>
+<li><a href="#19">Cooling » Rack 2 » Cooling Setup</a></li>
+<li><a href="#20">Cooling » Rack 2 » Fan Control</a></li>
+<li><a href="#21">Cooling » Rack 2 » Scan Devices</a></li>
+<li><a href="#22">BasicConfig » System Control » Function</a></li>
+<li><a href="#23">BasicConfig » System Control » Primary Configuration</a></li>
+<li><a href="#24">BasicConfig » System Control » Additional Configuration</a></li>
+<li><a href="#25">BasicConfig » System Control » Boards</a></li>
+<li><a href="#26">BasicConfig » System Control » Racks</a></li>
+<li><a href="#27">BasicConfig » System Control » Ethernet</a></li>
+<li><a href="#28">SNMP » System Control » SNMP Settings</a></li>
+<li><a href="#29">BitBus » System Control » BitBus Settings</a></li>
+<li><a href="#30">Date/Time » System Control » Date/Time Setup</a></li>
+<li><a href="#31">Date/Time » System Control » NTP Setup</a></li>
+<li><a href="#32">Options » System Control » Details</a></li>
+<li><a href="#33">Options » System Control » Manage Keys</a></li>
+<li><a href="#34">Custom Settings » System Control » Custom Settings</a></li>
+<li><a href="#35">Software » System Control » SW Update</a></li>
+<li><a href="#36">Software » System Control » Backup / Restore</a></li>
+<li><a href="#37">BasicConfig » Rack Controls » Rack Control 2 » Function</a></li>
+<li><a href="#38">BasicConfig » Rack Controls » Rack Control 2 » Primary Configuration</a></li>
+<li><a href="#39">BasicConfig » Rack Controls » Rack Control 2 » Additional Configuration</a></li>
+<li><a href="#40">BasicConfig » Rack Controls » Rack Control 2 » Boards</a></li>
+<li><a href="#41">BasicConfig » Rack Controls » Rack Control 2 » Racks</a></li>
+<li><a href="#42">BasicConfig » Rack Controls » Rack Control 2 » Ethernet</a></li>
+<li><a href="#43">SNMP » Rack Controls » Rack Control 2 » SNMP Settings</a></li>
+<li><a href="#44">Date/Time » Rack Controls » Rack Control 2 » Date/Time Setup</a></li>
+<li><a href="#45">Date/Time » Rack Controls » Rack Control 2 » NTP Setup</a></li>
+<li><a href="#46">Options » Rack Controls » Rack Control 2 » Details</a></li>
+<li><a href="#47">Options » Rack Controls » Rack Control 2 » Manage Keys</a></li>
+<li><a href="#48">Custom Settings » Rack Controls » Rack Control 2 » Custom Settings</a></li>
+<li><a href="#49">Software » Rack Controls » Rack Control 2 » SW Update</a></li>
+<li><a href="#50">Software » Rack Controls » Rack Control 2 » Backup / Restore</a></li>
+<li><a href="#51">Software » Rack Controls » Rack Control 2 » Backup / Restore » UploadFile</a></li>
+<li><a href="#52">Device Manager » System</a></li>
+<li><a href="#53">Device Manager » System » Device » Status</a></li>
+<li><a href="#54">Device Manager » System » Device » Typeplate</a></li>
+<li><a href="#55">Device Manager » System » CPU » Status</a></li>
+<li><a href="#56">Device Manager » System » CPU » Typeplate</a></li>
+<li><a href="#57">Device Manager » System » RCB 1 » RCB</a></li>
+<li><a href="#58">Device Manager » Rack  Control 1</a></li>
+<li><a href="#59">Device Manager » Rack  Control 1 » Device » Status</a></li>
+<li><a href="#60">Device Manager » Rack  Control 1 » Device » Typeplate</a></li>
+<li><a href="#61">Device Manager » Rack  Control 1 » CPU » Status</a></li>
+<li><a href="#62">Device Manager » Rack  Control 1 » CPU » Typeplate</a></li>
+<li><a href="#63">Device Manager » Rack  Control 1 » Mainboard » Status</a></li>
+<li><a href="#64">Device Manager » Rack  Control 1 » Mainboard » Typeplate</a></li>
+<li><a href="#65">Device Manager » Rack  Control 2</a></li>
+<li><a href="#66">Device Manager » Rack  Control 2 » Device » Status</a></li>
+<li><a href="#67">Device Manager » Rack  Control 2 » Device » Typeplate</a></li>
+<li><a href="#68">Device Manager » Rack  Control 2 » CPU » Status</a></li>
+<li><a href="#69">Device Manager » Rack  Control 2 » CPU » Typeplate</a></li>
+<li><a href="#70">Device Manager » Rack  Control 2 » Mainboard » Status</a></li>
+<li><a href="#71">Device Manager » Rack  Control 2 » Mainboard » Typeplate</a></li>
+<li><a href="#72">Device Manager » Rack  Control 9</a></li>
+<li><a href="#73">Device Manager » RackControls » RackControl 1</a></li>
+<li><a href="#74">Device Manager » RackControls » RackControl 1 » Overvoltage Protections » Overvoltage Protections</a></li>
+<li><a href="#75">Device Manager » RackControls » RackControl 2</a></li>
+<li><a href="#76">Device Manager » RackControls » RackControl 2 » Overvoltage Protections » Overvoltage Protections</a></li>
+</ul>
+</nav>
+<div class="content">
+<div class="decoLine"> Parameter Snapshot </div><br><br>
+<table border="1">
+<tr><td class="key">
+Created on: 2026-03-23T13:28:04</td></tr>
+</table><br>
+<table border="1">
+<td class="decoLine" colspan="2">Device Typeplate</td>
+<tr><td class="key">Name</td><td class="ro">TCE900</td></tr>
+<tr><td class="key">SW Package</td><td class="ro">TCE900</td></tr>
+<tr><td class="key">Part Number</td><td class="ro">2109.2000</td></tr>
+<tr><td class="key">Product Index</td><td class="ro">01.00</td></tr>
+<tr><td class="key">Production Date</td><td class="ro">31-07-2017</td></tr>
+<tr><td class="key">Variant</td><td class="ro">02</td></tr>
+<tr><td class="key">Serial Number</td><td class="ro">112989</td></tr>
+<tr><td class="key">SW / FW / Bios Number</td><td class="ro">24.0.0</td></tr>
+</table><br>
+<div class="anchor" id="1"></div>
+<table>
+<caption>System</caption>
+<tr>
+<td class="decoLine" colspan="2">TxB</td>
+</tr>
+<tr>
+<td class="key">Change over status</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Frequency</td><td class="val">701000000 Hz</td>
+</tr>
+<tr>
+<td class="key">Program status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Tx name</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Local/Remote</td><td class="val">Remote</td>
+</tr>
+<tr>
+<td class="key">Forward Power</td><td class="val">4977.372 W</td>
+</tr>
+<tr>
+<td class="key">Reserve</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">PA-Eff</td><td class="val">34.0 %</td>
+</tr>
+<tr>
+<td class="key">Program status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Tx B status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">TxA1</td>
+</tr>
+<tr>
+<td class="key">Change over status</td><td class="val">To Load</td>
+</tr>
+<tr>
+<td class="key">Frequency</td><td class="val">701000000 Hz</td>
+</tr>
+<tr>
+<td class="key">Program status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Tx name</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Local/Remote</td><td class="val">Remote</td>
+</tr>
+<tr>
+<td class="key">Forward Power</td><td class="val">4909.083 W</td>
+</tr>
+<tr>
+<td class="key">Reserve</td><td class="val">Reserve avail.</td>
+</tr>
+<tr>
+<td class="key">PA-Eff</td><td class="val">34.0 %</td>
+</tr>
+<tr>
+<td class="key">Program status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Tx A1 status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Common</td>
+</tr>
+<tr>
+<td class="key">Cooling state</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">DevMan state</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">_loadedTx</td><td class="val">9</td>
+</tr>
+<tr>
+<td class="key">Location</td><td class="val">PALGONG UHD1 TxA</td>
+</tr>
+<tr>
+<td class="key">NP1 Auto state</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">_NP1 Auto OnOff</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">_NP1 Auto Ready</td><td class="val">Ready</td>
+</tr>
+<tr>
+<td class="key">_NP1 Auto Changed</td><td class="val">Changed</td>
+</tr>
+</table>
+<div class="anchor" id="2"></div>
+<table>
+<caption>Automatic » n+1 Automatic</caption>
+<tr>
+<td class="key">Automatic</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Guard Time</td><td class="val">1 s</td>
+</tr>
+<tr>
+<td class="key">Switch Mode</td><td class="val">Multiple</td>
+</tr>
+<tr>
+<td class="key">Load Program Settings</td><td class="val">Tx A1</td>
+</tr>
+<tr>
+<td class="key">Loaded Settings</td><td class="val">----</td>
+</tr>
+<tr>
+<td class="key">Priority Control</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Tx B Position</td><td class="val">Right</td>
+</tr>
+<tr>
+<td class="key">Tx B replaces</td><td class="val">----</td>
+</tr>
+<tr>
+<td class="key">Reserve Tx</td><td class="val">Available</td>
+</tr>
+<tr>
+<td class="key">Changeover</td><td class="val">Not Occurred</td>
+</tr>
+<tr>
+<td class="key">Automatic</td><td class="val">Ready</td>
+</tr>
+<tr>
+<td class="key">RF Switches</td><td class="val">OK</td>
+</tr>
+</table>
+<div class="anchor" id="3"></div>
+<table>
+<caption>Automatic » Program Priorities</caption>
+<tr>
+<td class="key">TxA 1 / Priority</td><td class="val">1 (highest)</td>
+</tr>
+<tr>
+<td class="key">TxA 1 / Enable change- over toTx B</td><td class="val">Enabled</td>
+</tr>
+</table>
+<div class="anchor" id="4"></div>
+<table>
+<caption>Cooling » Rack 1</caption>
+<tr>
+<td class="key">Fan 1.1</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Fan 1.2</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Pump 1</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Pump 2</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Filter</td><td class="val">Clean</td>
+</tr>
+<tr>
+<td class="key">Outlet Temp.</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Pressure</td><td class="val">2.3 bar</td>
+</tr>
+<tr>
+<td class="key">Inlet Temp.</td><td class="val">34 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="5"></div>
+<table>
+<caption>Cooling » Rack 1 » Sensors » Sensors</caption>
+<tr>
+<td class="key">Outlet Temp.</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">55 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">65 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Set Point Temperature</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Inlet Temp.</td><td class="val">34 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Pressure</td><td class="val">2.3 bar</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">1.2 bar</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">0.9 bar</td>
+</tr>
+<tr>
+<td class="key">Extra Flow Rate</td><td class="val">10 l/min</td>
+</tr>
+</table>
+<div class="anchor" id="6"></div>
+<table>
+<caption>Cooling » Rack 1 » Fan 1 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">11 %</td>
+</tr>
+<tr>
+<td class="key">Operating Hours</td><td class="val">27977 h</td>
+</tr>
+</table>
+<div class="anchor" id="7"></div>
+<table>
+<caption>Cooling » Rack 1 » Fan 2 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">11 %</td>
+</tr>
+<tr>
+<td class="key">Operating Hours</td><td class="val">28053 h</td>
+</tr>
+</table>
+<div class="anchor" id="8"></div>
+<table>
+<caption>Cooling » Rack 1 » Pump 1 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Dry Running</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Flow</td><td class="val">76 l/min</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">76 %</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">IMP: NMT</td>
+</tr>
+</table>
+<div class="anchor" id="9"></div>
+<table>
+<caption>Cooling » Rack 1 » Pump 2 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Dry Running</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Flow</td><td class="val">73 l/min</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">76 %</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">IMP: NMT</td>
+</tr>
+</table>
+<div class="anchor" id="10"></div>
+<table>
+<caption>Cooling » Rack 1 » Cooling Setup</caption>
+<tr>
+<td class="key">Type</td><td class="val">R&amp;S Cooling</td>
+</tr>
+<tr>
+<td class="key">Heat Exchangers / Rack</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Fans / Heat Exchanger</td><td class="val">2</td>
+</tr>
+<tr>
+<td class="key">Set Point Temperature</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Outlet Temperature</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">55 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">65 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Pressure Warning Limit</td><td class="val">1.2 bar</td>
+</tr>
+<tr>
+<td class="key">Pressure Fault Limit</td><td class="val">0.9 bar</td>
+</tr>
+<tr>
+<td class="key">Extra Flow Rate</td><td class="val">10 l/min</td>
+</tr>
+<tr>
+<td class="key">Cooling</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">R&amp;S Standard</td>
+</tr>
+</table>
+<div class="anchor" id="11"></div>
+<table>
+<caption>Cooling » Rack 1 » Fan Control</caption>
+<tr>
+<td class="key">Max Fan Speed</td><td class="val">100 %</td>
+</tr>
+<tr>
+<td class="key">Antifreeze</td><td class="val">Off</td>
+</tr>
+</table>
+<div class="anchor" id="12"></div>
+<table>
+<caption>Cooling » Rack 1 » Scan Devices</caption>
+<tr>
+<td class="key">Scan Devices</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Status</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Find Fans</td><td class="val">Nothing to Do</td>
+</tr>
+<tr>
+<td class="key">Find Pumps</td><td class="val">Nothing to Do</td>
+</tr>
+</table>
+<div class="anchor" id="13"></div>
+<table>
+<caption>Cooling » Rack 2</caption>
+<tr>
+<td class="key">Fan 1.1</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Fan 1.2</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Pump 1</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Pump 2</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Filter</td><td class="val">Clean</td>
+</tr>
+<tr>
+<td class="key">Outlet Temp.</td><td class="val">25 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Pressure</td><td class="val">2.1 bar</td>
+</tr>
+<tr>
+<td class="key">Inlet Temp.</td><td class="val">24 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="14"></div>
+<table>
+<caption>Cooling » Rack 2 » Sensors » Sensors</caption>
+<tr>
+<td class="key">Outlet Temp.</td><td class="val">25 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">55 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">65 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Set Point Temperature</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Inlet Temp.</td><td class="val">24 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Pressure</td><td class="val">2.1 bar</td>
+</tr>
+<tr>
+<td class="key">Sensor Status</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">1.2 bar</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">0.9 bar</td>
+</tr>
+<tr>
+<td class="key">Extra Flow Rate</td><td class="val">10 l/min</td>
+</tr>
+</table>
+<div class="anchor" id="15"></div>
+<table>
+<caption>Cooling » Rack 2 » Fan 1 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">0 %</td>
+</tr>
+<tr>
+<td class="key">Operating Hours</td><td class="val">29104 h</td>
+</tr>
+</table>
+<div class="anchor" id="16"></div>
+<table>
+<caption>Cooling » Rack 2 » Fan 2 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">0 %</td>
+</tr>
+<tr>
+<td class="key">Operating Hours</td><td class="val">28966 h</td>
+</tr>
+</table>
+<div class="anchor" id="17"></div>
+<table>
+<caption>Cooling » Rack 2 » Pump 1 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Dry Running</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Flow</td><td class="val">73 l/min</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">73 %</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">IMP: NMT</td>
+</tr>
+</table>
+<div class="anchor" id="18"></div>
+<table>
+<caption>Cooling » Rack 2 » Pump 2 » Status</caption>
+<tr>
+<td class="key">Motor</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Supply</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Communication</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Overload</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Hardware</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Dry Running</td><td class="val">OK</td>
+</tr>
+<tr>
+<td class="key">Flow</td><td class="val">75 l/min</td>
+</tr>
+<tr>
+<td class="key">Speed</td><td class="val">73 %</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">IMP: NMT</td>
+</tr>
+</table>
+<div class="anchor" id="19"></div>
+<table>
+<caption>Cooling » Rack 2 » Cooling Setup</caption>
+<tr>
+<td class="key">Type</td><td class="val">R&amp;S Cooling</td>
+</tr>
+<tr>
+<td class="key">Heat Exchangers / Rack</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Fans / Heat Exchanger</td><td class="val">2</td>
+</tr>
+<tr>
+<td class="key">Set Point Temperature</td><td class="val">35 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Outlet Temperature</td><td class="val">25 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Warning Limit</td><td class="val">55 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Fault Limit</td><td class="val">65 &deg;C</td>
+</tr>
+<tr>
+<td class="key">Pressure Warning Limit</td><td class="val">1.2 bar</td>
+</tr>
+<tr>
+<td class="key">Pressure Fault Limit</td><td class="val">0.9 bar</td>
+</tr>
+<tr>
+<td class="key">Extra Flow Rate</td><td class="val">10 l/min</td>
+</tr>
+<tr>
+<td class="key">Cooling</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Type</td><td class="val">R&amp;S Standard</td>
+</tr>
+</table>
+<div class="anchor" id="20"></div>
+<table>
+<caption>Cooling » Rack 2 » Fan Control</caption>
+<tr>
+<td class="key">Max Fan Speed</td><td class="val">100 %</td>
+</tr>
+<tr>
+<td class="key">Antifreeze</td><td class="val">Off</td>
+</tr>
+</table>
+<div class="anchor" id="21"></div>
+<table>
+<caption>Cooling » Rack 2 » Scan Devices</caption>
+<tr>
+<td class="key">Scan Devices</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Status</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Find Fans</td><td class="val">Nothing to Do</td>
+</tr>
+<tr>
+<td class="key">Find Pumps</td><td class="val">Nothing to Do</td>
+</tr>
+</table>
+<div class="anchor" id="22"></div>
+<table>
+<caption>BasicConfig » System Control » Function</caption>
+<tr>
+<td class="key">System Control</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Cooling Control</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Tx Control</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Exciter</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Rack Control</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Function/Config</td><td class="val">Valid</td>
+</tr>
+<tr>
+<td class="key">Rack Number</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Slot Number</td><td class="val">1</td>
+</tr>
+</table>
+<div class="anchor" id="23"></div>
+<table>
+<caption>BasicConfig » System Control » Primary Configuration</caption>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifier Type</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">System Variant</td><td class="val">n+1 Tx</td>
+</tr>
+<tr>
+<td class="key">Redundancy</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Transmitters</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Exciter</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifiers</td><td class="val">0</td>
+</tr>
+<tr>
+<td class="key">Amplifier Type</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Tx Number</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifier Mode</td><td class="val">Broadband</td>
+</tr>
+<tr>
+<td class="key">Racks / Sys</td><td class="val">2</td>
+</tr>
+<tr>
+<td class="key">Racks /  Tx</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Cooling Type</td><td class="val">Liquid</td>
+</tr>
+<tr>
+<td class="key">Racks / RackControl</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Number of RackControls</td><td class="val">2</td>
+</tr>
+</table>
+<div class="anchor" id="24"></div>
+<table>
+<caption>BasicConfig » System Control » Additional Configuration</caption>
+<tr>
+<td class="key">Dummy Loads</td><td class="val">No Loads</td>
+</tr>
+<tr>
+<td class="key">Switchless Combiner</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">ParIO</td><td class="val">32_80</td>
+</tr>
+<tr>
+<td class="key">Int. RF Sensor</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Assign UPS</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">UPS IP Address</td><td class="val">192.168.58.110</td>
+</tr>
+<tr>
+<td class="key">Half Antennas</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Assign TDU</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Assign TSP</td><td class="val">Disabled</td>
+</tr>
+</table>
+<div class="anchor" id="25"></div>
+<table>
+<caption>BasicConfig » System Control » Boards</caption>
+<tr>
+<td class="key">Slot A</td><td class="val">TX IF</td>
+</tr>
+<tr>
+<td class="key">Slot B</td><td class="val">COOLING IF (1)</td>
+</tr>
+<tr>
+<td class="key">Slot C</td><td class="val">Empty</td>
+</tr>
+<tr>
+<td class="key">Slot CD</td><td class="val">LAN SWITCH</td>
+</tr>
+<tr>
+<td class="key">Slot D</td><td class="val">Empty</td>
+</tr>
+</table>
+<div class="anchor" id="26"></div>
+<table>
+<caption>BasicConfig » System Control » Racks</caption>
+<tr>
+<td class="key">Tx A1</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Tx A2</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A3</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A4</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A5</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A6</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A7</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A8</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx B</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Rack 1</td><td class="val">Enabled</td>
+</tr>
+</table>
+<div class="anchor" id="27"></div>
+<table>
+<caption>BasicConfig » System Control » Ethernet</caption>
+<tr>
+<td class="key">IP Address</td><td class="val">192.168.58.100</td>
+</tr>
+<tr>
+<td class="key">Network Mask</td><td class="val">255.255.255.0</td>
+</tr>
+<tr>
+<td class="key">MAC Address</td><td class="val">00:90:B8:1F:94:BF</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">192.168.48.30</td>
+</tr>
+<tr>
+<td class="key">Network Mask</td><td class="val">255.255.255.0</td>
+</tr>
+<tr>
+<td class="key">Gateway</td><td class="val">0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">MAC Address</td><td class="val">00:E0:33:03:C4:E9</td>
+</tr>
+<tr>
+<td class="key">DHCP Client</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Autosensing</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Speed Mode</td><td class="val">1000 MBit FD</td>
+</tr>
+</table>
+<div class="anchor" id="28"></div>
+<table>
+<caption>SNMP » System Control » SNMP Settings</caption>
+<tr>
+<td class="decoLine" colspan="2">General</td>
+</tr>
+<tr>
+<td class="key">Port Set/Get</td><td class="val">161</td>
+</tr>
+<tr>
+<td class="key">Inhibit Status</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Community</td>
+</tr>
+<tr>
+<td class="key">Access Level</td><td class="val">Read Only</td>
+</tr>
+<tr>
+<td class="key">Community Name</td><td class="val">public</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Selected Community</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Communities [1:5]</td>
+</tr>
+<tr>
+<td class="key">Access Level</td><td class="val">RO,RW,RO,RO,RO</td>
+</tr>
+<tr>
+<td class="key">Community Name</td><td class="val">public,broadcast,?,?,?</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On,On,Off,Off,Off</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Trap Sinks</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">Community</td><td class="val">public</td>
+</tr>
+<tr>
+<td class="key">Version</td><td class="val">v2c</td>
+</tr>
+<tr>
+<td class="key">Notify Type</td><td class="val">Trap</td>
+</tr>
+<tr>
+<td class="key">Port</td><td class="val">162</td>
+</tr>
+<tr>
+<td class="key">Inform Retry</td><td class="val">3</td>
+</tr>
+<tr>
+<td class="key">Inform Timeout</td><td class="val">15.0 s</td>
+</tr>
+<tr>
+<td class="key">Selected Trap Sink</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Trap Sinks [1:5]</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">Off,Off,Off,Off,Off</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">0.0.0.0,0.0.0.0,0.0.0.0,0.0.0.0,0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">Community</td><td class="val">public,public,public,public,public</td>
+</tr>
+<tr>
+<td class="key">Version</td><td class="val">v2c,v2c,v2c,v2c,v2c</td>
+</tr>
+<tr>
+<td class="key">Notify Type</td><td class="val">Trap,Trap,Trap,Trap,Trap</td>
+</tr>
+<tr>
+<td class="key">Port</td><td class="val">162,162,162,162,162</td>
+</tr>
+<tr>
+<td class="key">Inform Retry</td><td class="val">3,3,3,3,3</td>
+</tr>
+<tr>
+<td class="key">Inform Timeout</td><td class="val">15.0 s,15.0 s,15.0 s,15.0 s,15.0 s</td>
+</tr>
+</table>
+<div class="anchor" id="29"></div>
+<table>
+<caption>BitBus » System Control » BitBus Settings</caption>
+<tr>
+<td class="key">Enable</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">CRC</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Parity</td><td class="val">None</td>
+</tr>
+<tr>
+<td class="key">Stop Bits</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Data Bits</td><td class="val">8</td>
+</tr>
+<tr>
+<td class="key">Baudrate</td><td class="val">19200</td>
+</tr>
+<tr>
+<td class="key">Flowcontrol</td><td class="val">None</td>
+</tr>
+<tr>
+<td class="key">Status</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Link</td><td class="val">Link Ok</td>
+</tr>
+</table>
+<div class="anchor" id="30"></div>
+<table>
+<caption>Date/Time » System Control » Date/Time Setup</caption>
+<tr>
+<td class="key">Time</td><td class="val">13:23:09</td>
+</tr>
+<tr>
+<td class="key">Date</td><td class="val">23-03-2026</td>
+</tr>
+<tr>
+<td class="key">Hours</td><td class="val">9 h</td>
+</tr>
+<tr>
+<td class="key">Minutes</td><td class="val">0 min</td>
+</tr>
+</table>
+<div class="anchor" id="31"></div>
+<table>
+<caption>Date/Time » System Control » NTP Setup</caption>
+<tr>
+<td class="key">Enable</td><td class="val">Yes</td>
+</tr>
+<tr>
+<td class="key">Server</td><td class="val">192.168.58.102</td>
+</tr>
+<tr>
+<td class="key">Status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Master</td><td class="val">Disabled</td>
+</tr>
+</table>
+<div class="anchor" id="32"></div>
+<table>
+<caption>Options » System Control » Details</caption>
+<tr>
+<td class="key">Option-0</td><td class="val">K00 Demo :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-1</td><td class="val">K02 SNMP :  Active</td>
+</tr>
+<tr>
+<td class="key">Option-2</td><td class="val">K06 DTMB :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-3</td><td class="val">K08 ISDB-Tb :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-4</td><td class="val">K09 ATSC RS SFN :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-5</td><td class="val">K10 ATSC (MDTV) :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-6</td><td class="val">K11 Ext. Grp. Delay :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-7</td><td class="val">K12 DVB-T :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-8</td><td class="val">K15 NICAM :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-9</td><td class="val">K23 DAB :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-10</td><td class="val">K25 DVB-T2 RF Monitoring :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-11</td><td class="val">K31 TS over IP :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-12</td><td class="val">K35 Multiple PLP :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-13</td><td class="val">K37 GPS :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-14</td><td class="val">K41 ATSC :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-15</td><td class="val">K43 RF Signal Analysis :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-16</td><td class="val">K44 DVB-T2 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-17</td><td class="val">K45 CF Reduction :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-18</td><td class="val">K46 ATSC A110 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-19</td><td class="val">K47 DVB-T2 MISO :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-20</td><td class="val">K48 Serial Interface :  Active</td>
+</tr>
+<tr>
+<td class="key">Option-21</td><td class="val">K49 DVB-T2 Lite :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-22</td><td class="val">K50 DVB-T2 Tone Reser. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-23</td><td class="val">K54 MultiTx Switches :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-24</td><td class="val">K55 DVB-S/S2 Rx IP Out :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-25</td><td class="val">K56 DVB-S/S2 Rx Decryp. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-26</td><td class="val">K57 EDI Input :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-27</td><td class="val">K58 DVB-T2 Multi Prof. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-28</td><td class="val">K59 NIT Restamping :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-29</td><td class="val">K60 BTS Decompression :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-30</td><td class="val">K61 Dyn. Power Adaption :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-31</td><td class="val">K65 HTML5 GUI :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-32</td><td class="val">K72 USB-GUI :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-33</td><td class="val">K73 GLONASS :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-34</td><td class="val">K74 DVB-S/S2 Multistream :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-35</td><td class="val">K76 Efficiency Optimization :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-36</td><td class="val">K80 System Control :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-37</td><td class="val">K91 ATSC 3.0 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-38</td><td class="val">K92 ATSC 3.0 LDM :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-39</td><td class="val">K93 ATSC 3.0 Multi Subframe :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-40</td><td class="val">K94 FeMBMS R14 :  Inactive</td>
+</tr>
+</table>
+<div class="anchor" id="33"></div>
+<table>
+<caption>Options » System Control » Manage Keys</caption>
+<tr>
+<td class="key">Option Key</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Message</td><td class="val"></td>
+</tr>
+</table>
+<div class="anchor" id="34"></div>
+<table>
+<caption>Custom Settings » System Control » Custom Settings</caption>
+<tr>
+<td class="key">Location</td><td class="val">PALGONG UHD1 TxA</td>
+</tr>
+<tr>
+<td class="key">Screen Saver TMO</td><td class="val">60 s</td>
+</tr>
+<tr>
+<td class="key">Unit Temperature</td><td class="val">Celsius [C]</td>
+</tr>
+<tr>
+<td class="key">Unit Pressure</td><td class="val">bar</td>
+</tr>
+</table>
+<div class="anchor" id="35"></div>
+<table>
+<caption>Software » System Control » SW Update</caption>
+<tr>
+<td class="key">Update Mode</td><td class="val">Manual</td>
+</tr>
+<tr>
+<td class="key">Update Status</td><td class="val">Stopped</td>
+</tr>
+<tr>
+<td class="key">SW Version</td><td class="val">24.0.0</td>
+</tr>
+<tr>
+<td class="key">Device Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Device Group</td><td class="val">DEFAULT</td>
+</tr>
+</table>
+<div class="anchor" id="36"></div>
+<table>
+<caption>Software » System Control » Backup / Restore</caption>
+<tr>
+<td class="key">Backup State</td><td class="val">Ready</td>
+</tr>
+<tr>
+<td class="key">Backup Type</td><td class="val">Full</td>
+</tr>
+<tr>
+<td class="key">File State</td><td class="val">Available backup OK</td>
+</tr>
+<tr>
+<td class="key">Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2000.02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">112989</td>
+</tr>
+<tr>
+<td class="key">Tx Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Backup Type</td><td class="val">Full</td>
+</tr>
+<tr>
+<td class="key">Date | Time</td><td class="val">2025.12.02_03:52:38</td>
+</tr>
+<tr>
+<td class="key">SW/FW/Bios Number</td><td class="val">24.0.0</td>
+</tr>
+<tr>
+<td class="key">MD5 Checksum</td><td class="val">519441505ad606474a7467a8ffd525ea</td>
+</tr>
+</table>
+<div class="anchor" id="37"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Function</caption>
+<tr>
+<td class="key">System Control</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Cooling Control</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Tx Control</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Exciter</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Rack Control</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Function/Config</td><td class="val">Valid</td>
+</tr>
+<tr>
+<td class="key">Rack Number</td><td class="val">2</td>
+</tr>
+<tr>
+<td class="key">Slot Number</td><td class="val">1</td>
+</tr>
+</table>
+<div class="anchor" id="38"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Primary Configuration</caption>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifier Type</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">System Variant</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Redundancy</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Transmitters</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Exciter</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Modulation</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifiers</td><td class="val">0</td>
+</tr>
+<tr>
+<td class="key">Amplifier Type</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Tx Number</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Amplifier Mode</td><td class="val">Broadband</td>
+</tr>
+<tr>
+<td class="key">Racks / Sys</td><td class="val">0</td>
+</tr>
+<tr>
+<td class="key">Racks /  Tx</td><td class="val">---</td>
+</tr>
+<tr>
+<td class="key">Cooling Type</td><td class="val">Liquid</td>
+</tr>
+<tr>
+<td class="key">Racks / RackControl</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="key">Number of RackControls</td><td class="val">0</td>
+</tr>
+</table>
+<div class="anchor" id="39"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Additional Configuration</caption>
+<tr>
+<td class="key">Dummy Loads</td><td class="val">No Loads</td>
+</tr>
+<tr>
+<td class="key">Switchless Combiner</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">ParIO</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Int. RF Sensor</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Assign UPS</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">UPS IP Address</td><td class="val">0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">Half Antennas</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Assign TDU</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Assign TSP</td><td class="val">Disabled</td>
+</tr>
+</table>
+<div class="anchor" id="40"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Boards</caption>
+<tr>
+<td class="key">Slot A</td><td class="val">TX IF</td>
+</tr>
+<tr>
+<td class="key">Slot B</td><td class="val">COOLING IF (1)</td>
+</tr>
+<tr>
+<td class="key">Slot C</td><td class="val">Empty</td>
+</tr>
+<tr>
+<td class="key">Slot CD</td><td class="val">LAN SWITCH</td>
+</tr>
+<tr>
+<td class="key">Slot D</td><td class="val">Empty</td>
+</tr>
+</table>
+<div class="anchor" id="41"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Racks</caption>
+<tr>
+<td class="key">Tx A1</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A2</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A3</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A4</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A5</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A6</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A7</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx A8</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Tx B</td><td class="val">Enabled</td>
+</tr>
+<tr>
+<td class="key">Rack 1</td><td class="val">Enabled</td>
+</tr>
+</table>
+<div class="anchor" id="42"></div>
+<table>
+<caption>BasicConfig » Rack Controls » Rack Control 2 » Ethernet</caption>
+<tr>
+<td class="key">IP Address</td><td class="val">192.168.58.102</td>
+</tr>
+<tr>
+<td class="key">Network Mask</td><td class="val">255.255.255.0</td>
+</tr>
+<tr>
+<td class="key">MAC Address</td><td class="val">00:90:B8:1F:94:6E</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">100.100.100.100</td>
+</tr>
+<tr>
+<td class="key">Network Mask</td><td class="val">255.255.255.0</td>
+</tr>
+<tr>
+<td class="key">Gateway</td><td class="val">0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">MAC Address</td><td class="val">00:E0:33:03:C4:EB</td>
+</tr>
+<tr>
+<td class="key">DHCP Client</td><td class="val">Disabled</td>
+</tr>
+<tr>
+<td class="key">Autosensing</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Speed Mode</td><td class="val">100 MBit FD</td>
+</tr>
+</table>
+<div class="anchor" id="43"></div>
+<table>
+<caption>SNMP » Rack Controls » Rack Control 2 » SNMP Settings</caption>
+<tr>
+<td class="decoLine" colspan="2">General</td>
+</tr>
+<tr>
+<td class="key">Port Set/Get</td><td class="val">161</td>
+</tr>
+<tr>
+<td class="key">Inhibit Status</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Community</td>
+</tr>
+<tr>
+<td class="key">Access Level</td><td class="val">Read Only</td>
+</tr>
+<tr>
+<td class="key">Community Name</td><td class="val">public</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On</td>
+</tr>
+<tr>
+<td class="key">Selected Community</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Communities [1:5]</td>
+</tr>
+<tr>
+<td class="key">Access Level</td><td class="val">RO,RW,RO,RO,RO</td>
+</tr>
+<tr>
+<td class="key">Community Name</td><td class="val">public,broadcast,?,?,?</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">On,On,Off,Off,Off</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Trap Sinks</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">Community</td><td class="val">public</td>
+</tr>
+<tr>
+<td class="key">Version</td><td class="val">v2c</td>
+</tr>
+<tr>
+<td class="key">Notify Type</td><td class="val">Trap</td>
+</tr>
+<tr>
+<td class="key">Port</td><td class="val">162</td>
+</tr>
+<tr>
+<td class="key">Inform Retry</td><td class="val">3</td>
+</tr>
+<tr>
+<td class="key">Inform Timeout</td><td class="val">15.0 s</td>
+</tr>
+<tr>
+<td class="key">Selected Trap Sink</td><td class="val">1</td>
+</tr>
+<tr>
+<td class="decoLine" colspan="2">Trap Sinks [1:5]</td>
+</tr>
+<tr>
+<td class="key">Enable</td><td class="val">Off,Off,Off,Off,Off</td>
+</tr>
+<tr>
+<td class="key">IP Address</td><td class="val">0.0.0.0,0.0.0.0,0.0.0.0,0.0.0.0,0.0.0.0</td>
+</tr>
+<tr>
+<td class="key">Community</td><td class="val">public,public,public,public,public</td>
+</tr>
+<tr>
+<td class="key">Version</td><td class="val">v2c,v2c,v2c,v2c,v2c</td>
+</tr>
+<tr>
+<td class="key">Notify Type</td><td class="val">Trap,Trap,Trap,Trap,Trap</td>
+</tr>
+<tr>
+<td class="key">Port</td><td class="val">162,162,162,162,162</td>
+</tr>
+<tr>
+<td class="key">Inform Retry</td><td class="val">3,3,3,3,3</td>
+</tr>
+<tr>
+<td class="key">Inform Timeout</td><td class="val">15.0 s,15.0 s,15.0 s,15.0 s,15.0 s</td>
+</tr>
+</table>
+<div class="anchor" id="44"></div>
+<table>
+<caption>Date/Time » Rack Controls » Rack Control 2 » Date/Time Setup</caption>
+<tr>
+<td class="key">Time</td><td class="val">13:23:10</td>
+</tr>
+<tr>
+<td class="key">Date</td><td class="val">23-03-2026</td>
+</tr>
+<tr>
+<td class="key">Hours</td><td class="val">9 h</td>
+</tr>
+<tr>
+<td class="key">Minutes</td><td class="val">0 min</td>
+</tr>
+</table>
+<div class="anchor" id="45"></div>
+<table>
+<caption>Date/Time » Rack Controls » Rack Control 2 » NTP Setup</caption>
+<tr>
+<td class="key">Enable</td><td class="val">Yes</td>
+</tr>
+<tr>
+<td class="key">Server</td><td class="val">100.100.100.110</td>
+</tr>
+<tr>
+<td class="key">Status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Master</td><td class="val">Enabled</td>
+</tr>
+</table>
+<div class="anchor" id="46"></div>
+<table>
+<caption>Options » Rack Controls » Rack Control 2 » Details</caption>
+<tr>
+<td class="key">Option-0</td><td class="val">K00 Demo :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-1</td><td class="val">K02 SNMP :  Active</td>
+</tr>
+<tr>
+<td class="key">Option-2</td><td class="val">K06 DTMB :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-3</td><td class="val">K08 ISDB-Tb :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-4</td><td class="val">K09 ATSC RS SFN :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-5</td><td class="val">K10 ATSC (MDTV) :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-6</td><td class="val">K11 Ext. Grp. Delay :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-7</td><td class="val">K12 DVB-T :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-8</td><td class="val">K15 NICAM :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-9</td><td class="val">K23 DAB :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-10</td><td class="val">K25 DVB-T2 RF Monitoring :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-11</td><td class="val">K31 TS over IP :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-12</td><td class="val">K35 Multiple PLP :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-13</td><td class="val">K37 GPS :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-14</td><td class="val">K41 ATSC :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-15</td><td class="val">K43 RF Signal Analysis :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-16</td><td class="val">K44 DVB-T2 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-17</td><td class="val">K45 CF Reduction :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-18</td><td class="val">K46 ATSC A110 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-19</td><td class="val">K47 DVB-T2 MISO :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-20</td><td class="val">K48 Serial Interface :  Active</td>
+</tr>
+<tr>
+<td class="key">Option-21</td><td class="val">K49 DVB-T2 Lite :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-22</td><td class="val">K50 DVB-T2 Tone Reser. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-23</td><td class="val">K54 MultiTx Switches :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-24</td><td class="val">K55 DVB-S/S2 Rx IP Out :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-25</td><td class="val">K56 DVB-S/S2 Rx Decryp. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-26</td><td class="val">K57 EDI Input :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-27</td><td class="val">K58 DVB-T2 Multi Prof. :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-28</td><td class="val">K59 NIT Restamping :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-29</td><td class="val">K60 BTS Decompression :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-30</td><td class="val">K61 Dyn. Power Adaption :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-31</td><td class="val">K65 HTML5 GUI :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-32</td><td class="val">K72 USB-GUI :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-33</td><td class="val">K73 GLONASS :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-34</td><td class="val">K74 DVB-S/S2 Multistream :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-35</td><td class="val">K76 Efficiency Optimization :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-36</td><td class="val">K80 System Control :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-37</td><td class="val">K91 ATSC 3.0 :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-38</td><td class="val">K92 ATSC 3.0 LDM :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-39</td><td class="val">K93 ATSC 3.0 Multi Subframe :  Inactive</td>
+</tr>
+<tr>
+<td class="key">Option-40</td><td class="val">K94 FeMBMS R14 :  Inactive</td>
+</tr>
+</table>
+<div class="anchor" id="47"></div>
+<table>
+<caption>Options » Rack Controls » Rack Control 2 » Manage Keys</caption>
+<tr>
+<td class="key">Option Key</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Message</td><td class="val"></td>
+</tr>
+<tr>
+<td class="key">Option-1</td><td class="val">K41 ATSC : 0EDDA5FC3CC04D390</td>
+</tr>
+</table>
+<div class="anchor" id="48"></div>
+<table>
+<caption>Custom Settings » Rack Controls » Rack Control 2 » Custom Settings</caption>
+<tr>
+<td class="key">Location</td><td class="val">PALGONG UHD1 TxB</td>
+</tr>
+<tr>
+<td class="key">Screen Saver TMO</td><td class="val">10 s</td>
+</tr>
+<tr>
+<td class="key">Unit Temperature</td><td class="val">Celsius [C]</td>
+</tr>
+<tr>
+<td class="key">Unit Pressure</td><td class="val">bar</td>
+</tr>
+</table>
+<div class="anchor" id="49"></div>
+<table>
+<caption>Software » Rack Controls » Rack Control 2 » SW Update</caption>
+<tr>
+<td class="key">Update Mode</td><td class="val">Manual</td>
+</tr>
+<tr>
+<td class="key">Update Status</td><td class="val">Stopped</td>
+</tr>
+<tr>
+<td class="key">SW Version</td><td class="val">24.0.0</td>
+</tr>
+<tr>
+<td class="key">Device Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Device Group</td><td class="val">DEFAULT</td>
+</tr>
+</table>
+<div class="anchor" id="50"></div>
+<table>
+<caption>Software » Rack Controls » Rack Control 2 » Backup / Restore</caption>
+<tr>
+<td class="key">Backup State</td><td class="val">Ready</td>
+</tr>
+<tr>
+<td class="key">Backup Type</td><td class="val">Full</td>
+</tr>
+<tr>
+<td class="key">File State</td><td class="val">Available backup OK</td>
+</tr>
+<tr>
+<td class="key">Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2000.02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">112987</td>
+</tr>
+<tr>
+<td class="key">Tx Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Backup Type</td><td class="val">Full</td>
+</tr>
+<tr>
+<td class="key">Date | Time</td><td class="val">2025.12.02_03:48:11</td>
+</tr>
+<tr>
+<td class="key">SW/FW/Bios Number</td><td class="val">24.0.0</td>
+</tr>
+<tr>
+<td class="key">MD5 Checksum</td><td class="val">cc5963ad991889cd38dba6da37894f55</td>
+</tr>
+</table>
+<div class="anchor" id="51"></div>
+<table>
+<caption>Software » Rack Controls » Rack Control 2 » Backup / Restore » UploadFile</caption>
+<tr>
+<td class="key">Tx A1 Status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Tx B Status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">DevManager Rack 2 Status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="52"></div>
+<table>
+<caption>Device Manager » System</caption>
+<tr>
+<td class="key">Device status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">CPU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Keycard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Mainboard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot A status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot B status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot CD status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">TDU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">OVP status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">ParIO status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="53"></div>
+<table>
+<caption>Device Manager » System » Device » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Blower</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Configuration</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="54"></div>
+<table>
+<caption>Device Manager » System » Device » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">SW Package</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2000</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">01.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">31-07-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">112989</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">24.0.0</td>
+</tr>
+</table>
+<div class="anchor" id="55"></div>
+<table>
+<caption>Device Manager » System » CPU » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="56"></div>
+<table>
+<caption>Device Manager » System » CPU » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">IPS2</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">1206.3300</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">00.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">05-06-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">00</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">119181</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val"></td>
+</tr>
+</table>
+<div class="anchor" id="57"></div>
+<table>
+<caption>Device Manager » System » RCB 1 » RCB</caption>
+<tr>
+<td class="key">Name</td><td class="val">RCB</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2500.0808</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">02.06</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">17-11-2016</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">102163</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">01.02</td>
+</tr>
+</table>
+<div class="anchor" id="58"></div>
+<table>
+<caption>Device Manager » Rack  Control 1</caption>
+<tr>
+<td class="key">Device status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">CPU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Keycard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Mainboard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot A status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot B status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot CD status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">TDU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">OVP status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">ParIO status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="59"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » Device » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Blower</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Configuration</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="60"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » Device » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">SW Package</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2000</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">01.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">31-07-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">112989</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">24.0.0</td>
+</tr>
+</table>
+<div class="anchor" id="61"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » CPU » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="62"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » CPU » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">IPS2</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">1206.3300</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">00.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">05-06-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">00</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">119181</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val"></td>
+</tr>
+</table>
+<div class="anchor" id="63"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » Mainboard » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="64"></div>
+<table>
+<caption>Device Manager » Rack  Control 1 » Mainboard » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">SCB</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2300</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">05.04</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">17-07-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">118541</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">2.7.0.0.1</td>
+</tr>
+</table>
+<div class="anchor" id="65"></div>
+<table>
+<caption>Device Manager » Rack  Control 2</caption>
+<tr>
+<td class="key">Device status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">CPU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Keycard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Mainboard status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot A status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot B status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Slot CD status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">TDU status</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">OVP status</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="66"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » Device » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">System Blower</td><td class="val">Off</td>
+</tr>
+<tr>
+<td class="key">Configuration</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="67"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » Device » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">SW Package</td><td class="val">TCE900</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2000</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">01.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">31-07-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">112987</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">24.0.0</td>
+</tr>
+</table>
+<div class="anchor" id="68"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » CPU » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="69"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » CPU » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">IPS2</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">1206.3300</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">00.00</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">05-06-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">00</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">119183</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val"></td>
+</tr>
+</table>
+<div class="anchor" id="70"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » Mainboard » Status</caption>
+<tr>
+<td class="key">Hardware</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">Temperature</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="71"></div>
+<table>
+<caption>Device Manager » Rack  Control 2 » Mainboard » Typeplate</caption>
+<tr>
+<td class="key">Name</td><td class="val">SCB</td>
+</tr>
+<tr>
+<td class="key">Part Number</td><td class="val">2109.2300</td>
+</tr>
+<tr>
+<td class="key">Product Index</td><td class="val">05.04</td>
+</tr>
+<tr>
+<td class="key">Production Date</td><td class="val">14-07-2017</td>
+</tr>
+<tr>
+<td class="key">Variant</td><td class="val">02</td>
+</tr>
+<tr>
+<td class="key">Serial Number</td><td class="val">118575</td>
+</tr>
+<tr>
+<td class="key">SW / FW / Bios Number</td><td class="val">2.7.0.0.1</td>
+</tr>
+</table>
+<div class="anchor" id="72"></div>
+<table>
+<caption>Device Manager » Rack  Control 9</caption>
+<tr>
+<td class="key">RackCtrl 1 state</td><td class="val">Ok</td>
+</tr>
+<tr>
+<td class="key">RackCtrl 2 state</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="73"></div>
+<table>
+<caption>Device Manager » RackControls » RackControl 1</caption>
+<tr>
+<td class="key">OVP state</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="74"></div>
+<table>
+<caption>Device Manager » RackControls » RackControl 1 » Overvoltage Protections » Overvoltage Protections</caption>
+<tr>
+<td class="decoLine" colspan="2">Data not available or not serviced !</td>
+</tr>
+<div class="anchor" id="75"></div>
+<table>
+<caption>Device Manager » RackControls » RackControl 2</caption>
+<tr>
+<td class="key">OVP state</td><td class="val">Ok</td>
+</tr>
+</table>
+<div class="anchor" id="76"></div>
+<table>
+<caption>Device Manager » RackControls » RackControl 2 » Overvoltage Protections » Overvoltage Protections</caption>
+<tr>
+<td class="decoLine" colspan="2">Data not available or not serviced !</td>
+</tr>
+</div>
+</div>
+</body>
+</html>

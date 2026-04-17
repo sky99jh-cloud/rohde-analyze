@@ -44,22 +44,37 @@ def _get_section(soup: BeautifulSoup, caption_text: str) -> dict[str, str]:
     return {}
 
 
-def parse_html(html_path: str) -> dict:
+# 스냅샷에 Rack AMP 6 섹션이 있으면 UHDTV(6채널), 없으면 DTV(2채널)로 본다.
+_UHDTV_HTML_MARKER = "Rack 1 Amplifiers » Amplifier 6"
+
+
+def detect_html_tx_kind(html_path: str) -> str:
+    """
+    HTML 내용으로 송신기 스냅샷 종류를 구분한다.
+    반환값은 uhdtv 또는 dtv 문자열.
+    """
+    with open(html_path, "r", encoding="utf-8", errors="replace") as f:
+        text = f.read(3_000_000)
+    return "uhdtv" if _UHDTV_HTML_MARKER in text else "dtv"
+
+
+def parse_html(html_path: str, *, num_amplifiers: int = 2) -> dict:
     """
     HTML 파일을 파싱하여 Excel에 입력할 데이터를 반환한다.
+
+    Parameters
+    ----------
+    num_amplifiers : DTV는 2, UHDTV는 6 (Rack 1 Amplifier 개수).
 
     반환 구조:
     {
         "created_on": datetime,
-        "amp1": { label: value, ... },
-        "amp2": { label: value, ... },
+        "amp_count": int,
+        "amp1" … "ampN": { label: value, ... },
         "forward_power": float,
         "reflected_power": float,
         "shoulder_distance": (float, str),
-        "shoulder_left": (float, str),
-        "shoulder_right": (float, str),
-        "measured_ripple": (float, str),
-        "measured_group_delay": (float, str),
+        ...
     }
     """
     with open(html_path, "r", encoding="utf-8") as f:
@@ -92,8 +107,14 @@ def parse_html(html_path: str) -> dict:
     result["measured_ripple"] = _extract_value_and_unit(linear.get("Measured Ripple", ""))
     result["measured_group_delay"] = _extract_value_and_unit(linear.get("Measured Group Delay", ""))
 
-    # ── Amplifier 데이터 추출 (1, 2) ───────────────────────────────
-    for amp_n in (1, 2):
+    if num_amplifiers < 1:
+        num_amplifiers = 1
+    if num_amplifiers > 8:
+        num_amplifiers = 8
+    result["amp_count"] = num_amplifiers
+
+    # ── Amplifier 데이터 추출 (Rack 1, Amplifier 1 … N) ────────────
+    for amp_n in range(1, num_amplifiers + 1):
         status = _get_section(
             soup,
             f"Output Stage » Rack 1 Amplifiers » Amplifier {amp_n} » Status",
