@@ -75,9 +75,9 @@
 ## GUI (`main.py`)
 
 - **버전**: `APP_NAME` / `APP_VERSION`(현재 **v1.0**) — 창 제목·헤더 우측에 표시.
-- **분석 모드 전환**: DTV / UHDTV / DMB 라디오 변경 시 **파일 선택 경로 초기화**(잘못된 조합 방지).
-- **테마**: 로데 프로모 그래픽에 가깝게 **딥 네이비 배경**, 헤더 **이중선형 블루 그라데이션**, 기술 **그리드**, `UHF` 워터마크, 우상단 **타깃** 장식, **스펙트럼 바**(흰·시안·오렌지 계열), 패널 **시안 글로우** 테두리, 로그는 다크 터미널 톤.
-- **frontend-design** 스킬(`.cursor/skills/frontend-design/SKILL.md`)을 참고해 **산업용·HUD** 느낌과 **악센트**를 맞춤.
+- **분석 모드 UI**: DTV / UHDTV / DMB를 **세그먼트 필(pill) 버튼**으로 표시. 선택된 모드는 **딥 네이비 배경 + 흰 글자**로 강조, 미선택 필은 라이트 톤 + 테두리. 마우스 hover 시 배경·테두리 시안 톤으로 전환. 모드 변경 시 **파일 선택 경로 초기화**(잘못된 조합 방지).
+- **테마**: **미드 네이비 HUD** — 스틸블루 배경(`APP_BG`), 라이트 네이비 패널(`PANEL_BG`), 딥 네이비 악센트(`ACCENT_CYAN`). 헤더는 **좌상 미스트 → 우하 딥 스틸** 대각 그라데이션, 기술 그리드·`UHF` 워터마크·우상단 **타깃** 동심원·**스펙트럼 바**(딥 인디고 → 스틸 → 시안 → 오렌지·로즈). Progressbar·로그 박스·버튼도 같은 팔레트.
+- **frontend-design** 스킬(`.cursor/skills/frontend-design/SKILL.md`)을 참고해 **산업용·HUD** 톤과 악센트를 맞춤. 팔레트는 상단 상수(`APP_BG`·`PANEL_BG`·`ACCENT_CYAN` 등)만 바꾸면 전 화면 일괄 이동.
 
 ---
 
@@ -124,6 +124,11 @@ python main.py
 - **편차(ROHDE)**: **I3(Reflected Power)** 는 1년 평균 대비 검사·빨간 글씨 **제외**(F3·AMP·특이사항 로직 유지).
 - **GUI**: 분석 모드(DTV/UHDTV/DMB) 전환 시 **파일 선택 경로 전부 초기화**. **`APP_VERSION` v1.0** — 창 제목·헤더에 표시.
 - **Excel 저장**: `_ensure_single_sheet_selected` — 저장 전 모든 시트 `tabSelected` 해제 후 활성 시트만 선택, `activeTab` 정렬. 재오픈 시 **시트 탭 그룹**으로 보이던 현상 완화.
+
+### 2026-04-17 (GUI 테마·모드 필)
+
+- **테마 톤 조정**: 다크 HUD → 라이트 스카이 → 스틸 네이비 → **미드 네이비 HUD**로 단계 이동(`APP_BG #8eaec9`, `PANEL_BG #d7e2ee`, `ACCENT_CYAN #155f89` 등). 헤더 그라데이션·그리드·워터마크·타깃 동심원·스펙트럼 바·Progressbar·로그 박스 전부 새 팔레트에 맞춤.
+- **분석 모드 UI 전면 교체**: 작아 보이던 `tk.Radiobutton` 점 → **세그먼트 필 버튼**(`tk.Frame + tk.Label`). 선택 필은 `ACCENT_CYAN` 배경 + 흰 글자, 미선택은 라이트 톤 + 외곽선, hover 시 톤업. `self._mode_buttons` 저장, `_refresh_mode_buttons()`로 모드 변경·초기화 시 일괄 갱신. 기존 `self._tx_mode` StringVar·trace·파일 초기화 로직은 그대로 유지.
 
 ---
 

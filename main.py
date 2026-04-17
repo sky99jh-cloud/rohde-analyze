@@ -13,27 +13,30 @@ from excel_handler import detect_excel_tx_kind, update_excel
 from html_parser import detect_html_tx_kind, parse_html
 
 
-# ── R&S 프로모 스타일: 딥 블루 대기 + HUD 패널 + 시안 글로우 (frontend-design) ─
+# ── R&S 프로모 스타일: 스틸 네이비 HUD — 라이트 블루 베이스 + 딥 네이비 악센트 (frontend-design) ─
 APP_NAME = "ROHDE 송신기 로그 분석기"
 APP_VERSION = "1.0"
 
-APP_BG = "#040a10"
-PANEL_BG = "#0c1620"
-PANEL_BORDER = "#1a4a62"
-PANEL_GLOW = "#2ec4e8"
-ACCENT_CYAN = "#5dd5ff"
-ACCENT_CYAN_SOFT = "#3eb8dc"
+APP_BG = "#8eaec9"
+PANEL_BG = "#d7e2ee"
+PANEL_BORDER = "#4b7fa4"
+PANEL_GLOW = "#1a5f8c"
+ACCENT_CYAN = "#155f89"
+ACCENT_CYAN_SOFT = "#3a84ae"
 ACCENT_ORANGE = "#ff8c42"
-TEXT_PRIMARY = "#f2f8ff"
-TEXT_MUTED = "#7a9bb8"
-ENTRY_BG = "#050c14"
-LOG_BG = "#020810"
-LOG_FG = "#c5e4f5"
-BTN_PRIMARY = "#0088aa"
-BTN_HOVER = "#00a8cc"
-BTN_SECONDARY_BG = "#0f2535"
-BTN_SECONDARY_HOVER = "#153548"
-RADIO_SELECT = "#143044"
+TEXT_PRIMARY = "#061a2e"
+TEXT_MUTED = "#2f4f6c"
+ENTRY_BG = "#eaf0f7"
+LOG_BG = "#c8d6e3"
+LOG_FG = "#061a2e"
+BTN_PRIMARY = "#155f89"
+BTN_HOVER = "#0d4c72"
+BTN_SECONDARY_BG = "#b7c8db"
+BTN_SECONDARY_HOVER = "#9db5cd"
+RADIO_SELECT = "#96afc6"
+LOG_SELECT_BG = "#96afc6"
+LOG_SUCCESS = "#0b7a4d"
+LOG_ERROR = "#a8263b"
 FONT_UI = "Segoe UI"
 FONT_NORMAL = (FONT_UI, 10)
 FONT_BOLD = (FONT_UI, 10, "bold")
@@ -69,7 +72,7 @@ class App(tk.Tk):
         style.configure(
             "TProgressbar",
             background=ACCENT_CYAN,
-            troughcolor="#0f2838",
+            troughcolor="#86a6c0",
             borderwidth=0,
             lightcolor=ACCENT_CYAN_SOFT,
             darkcolor=ACCENT_CYAN,
@@ -82,11 +85,11 @@ class App(tk.Tk):
         w = max(c.winfo_width(), 2)
         h = 100
         c.delete("all")
-        # 좌·하단이 살짝 밝고 우·상단이 깊은 네이비 (캡처 느낌의 대각 기류)
-        c_tl = (0, 12, 28)
-        c_tr = (2, 8, 18)
-        c_bl = (12, 55, 82)
-        c_br = (4, 28, 45)
+        # 미드 네이비 HUD — 좌·상단은 미스트 블루, 우·하단은 딥 스틸 네이비 (대각 기류)
+        c_tl = (196, 213, 230)
+        c_tr = (162, 187, 211)
+        c_bl = (90, 128, 165)
+        c_br = (68, 108, 145)
 
         def _pix(x: int, y: int) -> str:
             tx, ty = x / max(w - 1, 1), y / max(h - 1, 1)
@@ -120,19 +123,19 @@ class App(tk.Tk):
                 color = _pix(cx, cy)
                 c.create_rectangle(x, y, x2, y2, fill=color, outline=color, width=0)
 
-        # 기술 그리드 (저채도)
+        # 기술 그리드 (미드 네이비 위 선명한 라인)
         for gx in range(0, w, 28):
-            c.create_line(gx, 0, gx, h, fill="#1a3044", width=1)
+            c.create_line(gx, 0, gx, h, fill="#6b92b4", width=1)
         for gy in range(0, h, 24):
-            c.create_line(0, gy, w, gy, fill="#152838", width=1)
+            c.create_line(0, gy, w, gy, fill="#80a5c3", width=1)
 
-        # 워터마크 타이포 (배경 레이어)
+        # 워터마크 타이포 (네이비 배경 강조)
         c.create_text(
             w * 0.52,
             h * 0.55,
             text="UHF",
             anchor="center",
-            fill="#0d1f2e",
+            fill="#6a8fad",
             font=(FONT_UI, 42, "bold"),
         )
         c.create_text(
@@ -140,16 +143,16 @@ class App(tk.Tk):
             h * 0.92,
             text="medium power",
             anchor="s",
-            fill="#0a1824",
+            fill="#5c82a1",
             font=(FONT_UI, 11),
         )
 
         # 우상단 기술 아이콘 (동심원·타깃)
         cx, cy = w - 48, 34
-        for ri, col in ((22, "#1e4058"), (15, "#2a5570"), (8, ACCENT_CYAN)):
+        for ri, col in ((22, "#40709a"), (15, "#214d76"), (8, ACCENT_CYAN)):
             c.create_oval(cx - ri, cy - ri, cx + ri, cy + ri, outline=col, width=1)
-        c.create_line(cx - 26, cy, cx + 26, cy, fill="#3a6a88", width=1)
-        c.create_line(cx, cy - 26, cx, cy + 26, fill="#3a6a88", width=1)
+        c.create_line(cx - 26, cy, cx + 26, cy, fill="#305c80", width=1)
+        c.create_line(cx, cy - 26, cx, cy + 26, fill="#305c80", width=1)
 
         c.create_text(
             24, 28, text=APP_NAME,
@@ -165,11 +168,11 @@ class App(tk.Tk):
             anchor="e", fill=TEXT_MUTED, font=FONT_SUB,
         )
 
-        # 스펙트럼 바 (화이트 → 시안 → 오렌지·핑크)
+        # 스펙트럼 바 (미드 네이비 배경용: 딥 인디고 → 스틸블루 → 라이트시안 → 오렌지·로즈)
         bar_w = 3
         for i in range(14):
             bh = 14 + (i * 11) % 42
-            col = ("#f0f9ff", "#7dd3fc", ACCENT_CYAN, "#ffb37a", "#ff6eb4")[i % 5]
+            col = ("#0a253f", "#1f6d99", "#6fb4d6", "#ff9e5c", "#eb7aa3")[i % 5]
             x0 = w - 28 - i * 6
             if x0 < 300:
                 break
@@ -197,35 +200,55 @@ class App(tk.Tk):
             "highlightthickness": 1,
             "labelanchor": "nw",
         }
-        rb_kw = {
-            "bg": PANEL_BG,
-            "fg": TEXT_PRIMARY,
-            "font": FONT_NORMAL,
-            "anchor": "w",
-            "activebackground": PANEL_BG,
-            "activeforeground": ACCENT_CYAN,
-            "selectcolor": RADIO_SELECT,
-            "highlightthickness": 0,
-            "bd": 0,
-        }
-
         mode_frame = tk.LabelFrame(main, text=" 분석 모드 ", padx=14, pady=10, **lf_kw)
         mode_frame.pack(fill="x", pady=(0, 10))
-        tk.Radiobutton(
-            mode_frame, text="DTV (AMP 2개)",
-            variable=self._tx_mode, value="dtv",
-            **rb_kw,
-        ).pack(side="left", padx=(4, 16))
-        tk.Radiobutton(
-            mode_frame, text="UHDTV (AMP 6개)",
-            variable=self._tx_mode, value="uhdtv",
-            **rb_kw,
-        ).pack(side="left", padx=(0, 16))
-        tk.Radiobutton(
-            mode_frame, text="DMB (TX-A / TX-B)",
-            variable=self._tx_mode, value="dmb",
-            **rb_kw,
-        ).pack(side="left", padx=4)
+
+        self._mode_buttons: dict[str, tuple[tk.Frame, tk.Label]] = {}
+        modes = [
+            ("dtv", "DTV (AMP 2개)"),
+            ("uhdtv", "UHDTV (AMP 6개)"),
+            ("dmb", "DMB (TX-A / TX-B)"),
+        ]
+        for idx, (value, label) in enumerate(modes):
+            pill = tk.Frame(
+                mode_frame,
+                bg=BTN_SECONDARY_BG,
+                highlightbackground=PANEL_BORDER,
+                highlightthickness=1,
+                bd=0,
+            )
+            lbl = tk.Label(
+                pill,
+                text=label,
+                bg=BTN_SECONDARY_BG,
+                fg=TEXT_PRIMARY,
+                font=FONT_BOLD,
+                padx=18,
+                pady=7,
+                cursor="hand2",
+            )
+            lbl.pack(fill="both", expand=True)
+
+            def _on_click(_e=None, v=value):
+                self._tx_mode.set(v)
+
+            def _on_enter(_e=None, p=pill, l=lbl, v=value):
+                if self._tx_mode.get() != v:
+                    p.configure(bg=BTN_SECONDARY_HOVER, highlightbackground=ACCENT_CYAN_SOFT)
+                    l.configure(bg=BTN_SECONDARY_HOVER)
+
+            def _on_leave(_e=None, p=pill, l=lbl, v=value):
+                if self._tx_mode.get() != v:
+                    p.configure(bg=BTN_SECONDARY_BG, highlightbackground=PANEL_BORDER)
+                    l.configure(bg=BTN_SECONDARY_BG)
+
+            for w in (pill, lbl):
+                w.bind("<Button-1>", _on_click)
+                w.bind("<Enter>", _on_enter)
+                w.bind("<Leave>", _on_leave)
+
+            pill.pack(side="left", padx=(0, 10) if idx < len(modes) - 1 else 0)
+            self._mode_buttons[value] = (pill, lbl)
 
         file_frame = tk.LabelFrame(main, text=" 파일 선택 ", padx=14, pady=12, **lf_kw)
         file_frame.pack(fill="x", pady=(0, 12))
@@ -281,7 +304,7 @@ class App(tk.Tk):
             relief="flat",
             wrap="word",
             insertbackground=ACCENT_CYAN,
-            selectbackground="#1a4a62",
+            selectbackground=LOG_SELECT_BG,
             selectforeground=TEXT_PRIMARY,
             highlightthickness=1,
             highlightbackground=PANEL_BORDER,
@@ -289,8 +312,8 @@ class App(tk.Tk):
         self._log_box.pack(fill="both", expand=True, padx=6, pady=6)
 
         self._log_box.tag_config("info", foreground=ACCENT_CYAN)
-        self._log_box.tag_config("success", foreground="#6ee7b7")
-        self._log_box.tag_config("error", foreground="#fb7185")
+        self._log_box.tag_config("success", foreground=LOG_SUCCESS)
+        self._log_box.tag_config("error", foreground=LOG_ERROR)
         self._log_box.tag_config("detail", foreground=TEXT_MUTED)
 
         self.after_idle(self._paint_header)
@@ -312,6 +335,18 @@ class App(tk.Tk):
         else:
             self._dmb_files.pack_forget()
             self._rohde_files.pack(fill="x")
+        self._refresh_mode_buttons()
+
+    def _refresh_mode_buttons(self) -> None:
+        """선택된 모드 필을 진한 네이비 + 흰 글자로 강조, 나머지는 외곽선 톤."""
+        selected = self._tx_mode.get()
+        for value, (pill, lbl) in getattr(self, "_mode_buttons", {}).items():
+            if value == selected:
+                pill.configure(bg=ACCENT_CYAN, highlightbackground=ACCENT_CYAN)
+                lbl.configure(bg=ACCENT_CYAN, fg="#ffffff")
+            else:
+                pill.configure(bg=BTN_SECONDARY_BG, highlightbackground=PANEL_BORDER)
+                lbl.configure(bg=BTN_SECONDARY_BG, fg=TEXT_PRIMARY)
 
     def _add_file_row(self, parent, label_text, str_var, kind, row):
         tk.Label(
