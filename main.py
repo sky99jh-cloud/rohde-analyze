@@ -14,6 +14,9 @@ from html_parser import detect_html_tx_kind, parse_html
 
 
 # ── R&S 프로모 스타일: 딥 블루 대기 + HUD 패널 + 시안 글로우 (frontend-design) ─
+APP_NAME = "ROHDE 송신기 로그 분석기"
+APP_VERSION = "1.0"
+
 APP_BG = "#040a10"
 PANEL_BG = "#0c1620"
 PANEL_BORDER = "#1a4a62"
@@ -42,7 +45,7 @@ FONT_MONO = ("Consolas", 9)
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("ROHDE 송신기 로그 분석기")
+        self.title(f"{APP_NAME} v{APP_VERSION}")
         self.geometry("800x700")
         self.minsize(620, 540)
         self.configure(bg=APP_BG)
@@ -149,12 +152,17 @@ class App(tk.Tk):
         c.create_line(cx, cy - 26, cx, cy + 26, fill="#3a6a88", width=1)
 
         c.create_text(
-            24, 28, text="ROHDE 송신기 로그 분석기",
+            24, 28, text=APP_NAME,
             anchor="w", fill=TEXT_PRIMARY, font=FONT_TITLE,
         )
         c.create_text(
             24, 58, text="Parameter snapshot → Excel workbook",
             anchor="w", fill=TEXT_MUTED, font=FONT_SUB,
+        )
+        c.create_text(
+            w - 20, 58,
+            text=f"v{APP_VERSION}",
+            anchor="e", fill=TEXT_MUTED, font=FONT_SUB,
         )
 
         # 스펙트럼 바 (화이트 → 시안 → 오렌지·핑크)
@@ -287,7 +295,16 @@ class App(tk.Tk):
 
         self.after_idle(self._paint_header)
 
+    def _clear_file_selections(self) -> None:
+        """분석 모드 전환 시 파일 선택 경로 초기화 (DTV / UHDTV / DMB 공통)."""
+        self._html_path.set("")
+        self._excel_path.set("")
+        self._txt_path.set("")
+        self._excel_a_path.set("")
+        self._excel_b_path.set("")
+
     def _on_mode_change(self, *args):
+        self._clear_file_selections()
         mode = self._tx_mode.get()
         if mode == "dmb":
             self._rohde_files.pack_forget()
@@ -445,13 +462,13 @@ class App(tk.Tk):
         self._log_box.configure(state="disabled")
 
     def _show_analysis_result(self, alerts: list[str], save_summary: str) -> None:
-        """1년 평균 대비 임계값 이탈 시 경고, 없으면 정상 메시지 (FWD·REF·AMP Temp·특이사항 50%, 그 외 20%)."""
+        """1년 평균 대비 임계값 이탈 시 경고, 없으면 정상 메시지 (FWD·AMP Temp·특이사항 50%, 그 외 20%; REF(I3) 제외)."""
         if alerts:
             for a in alerts:
                 self.after(0, self._log, f"  [편차] {a}", "error")
             body = (
                 "다음 항목이 이전 시트(최근 1년) 평균 대비 임계값 이상 차이납니다 "
-                "(FWD·REF·AMP Temp·특이사항: 50%, 그 외: 20%). "
+                "(FWD·AMP Temp·특이사항: 50%, 그 외: 20%; REF(I3)는 검사 제외). "
                 "해당 셀은 빨간색으로 표시되었습니다.\n\n"
                 + "\n".join(alerts)
                 + "\n\n"

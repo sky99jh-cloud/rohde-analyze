@@ -15,7 +15,7 @@
 |------|------|
 | 런타임 | Python 3 |
 | GUI | `tkinter` — 분석 모드 **DTV / UHDTV / DMB**, 파일 선택, 실행, 진행 표시, 로그, **R&S 스타일 다크 HUD** 테마 |
-| 편차 하이라이트 | `excel_deviation.py` — 최근 1년 시트 평균 대비 이탈 시 셀 빨간색·알림 (**기본 20%** / **FWD·REF·AMP Temp·특이사항 50%**) |
+| 편차 하이라이트 | `excel_deviation.py` — 최근 1년 시트 평균 대비 이탈 시 셀 빨간색·알림 (**기본 20%** / **FWD·AMP Temp·특이사항 50%**; **REF(I3)** 는 검사 제외) |
 | ROHDE HTML | `BeautifulSoup` + `lxml` — caption 기준 테이블; AMP 2 또는 6 |
 | DMB 로그 | 텍스트 파싱 — `tx-1`/`tx-2` × `pa1`~`pa5`, **digital** 줄(PWR_A 등) |
 | Excel | `openpyxl` — 시트 복사, 셀 갱신, 활성 시트·저장, 시트 확대 85% |
@@ -28,9 +28,9 @@
 |------|------|
 | `main.py` | 앱 진입점. DTV·UHDTV(`parse_html`→`update_excel`) / DMB(`parse_dmb_log`→`update_dmb_excel`×2) 분기 |
 | `html_parser.py` | `parse_html`, `detect_html_tx_kind` |
-| `excel_handler.py` | `update_excel`, `detect_excel_tx_kind` — ROHDE 마지막 시트 복제·갱신 |
+| `excel_handler.py` | `update_excel`, `detect_excel_tx_kind` — ROHDE 마지막 시트 복제·갱신, `_make_sheet_name`(YYYY_MM), `_ensure_single_sheet_selected` |
 | `dmb_parser.py` | `parse_dmb_log`, `detect_dmb_excel_kind` — VM602 `.txt`, TX-A/B 엑셀 구분 |
-| `dmb_excel.py` | `update_dmb_excel` — DMB TX-A 또는 TX-B 워크북 한 파일씩 갱신 |
+| `dmb_excel.py` | `update_dmb_excel` — DMB TX-A 또는 TX-B 워크북 한 파일씩 갱신(저장 전 시트 탭 선택 정리 동일) |
 | `excel_deviation.py` | 1년 평균 대비 편차 검사·빨간 글씨·알림 문구 수집 (`apply_deviation_highlight`, `collect_*`) |
 | `.cursor/skills/frontend-design/SKILL.md` | Cursor Agent용 UI 품질 가이드(선택) |
 | `requirements.txt` | `beautifulsoup4`, `lxml`, `openpyxl` |
@@ -54,11 +54,11 @@
 3. **특이사항** — **DTV만** Non Linear / Linear. **UHDTV**는 미기입.
 
 4. **시트·표시**  
-   - 마지막 시트 복사, 시트명 **`YYYY-MM`**, **G2/I2/J2** Created on, 활성 시트·**85%** 확대.
+   - 마지막 시트 복사, 시트명 **`YYYY_MM`** (같은 달 중복 시 `YYYY_MM_1` …), **G2/I2/J2** Created on, 활성 시트·**85%** 확대. 저장 시 **시트 탭 그룹 선택**이 남지 않도록 `tabSelected` 정리(`_ensure_single_sheet_selected`).
 
 5. **검증** — `detect_html_tx_kind`, `detect_excel_tx_kind`(찾아보기·실행 시).
 
-6. **편차(ROHDE)** — 이전 시트(최근 1년) 동일 셀 평균과 비교. **F3·I3·AMP Temp·특이사항**은 **50%** 이상, 그 외는 **20%** 이상일 때 빨간 글씨·완료 시 경고.
+6. **편차(ROHDE)** — 이전 시트(최근 1년) 동일 셀 평균과 비교. **F3(Forward)·AMP Temp·특이사항**은 **50%** 이상, 그 외는 **20%** 이상일 때 빨간 글씨·완료 시 경고. **I3(Reflected)** 는 평균대비 검사에서 제외(값은 시트에 기록).
 
 ### DMB (TX-A / TX-B)
 
@@ -74,6 +74,8 @@
 
 ## GUI (`main.py`)
 
+- **버전**: `APP_NAME` / `APP_VERSION`(현재 **v1.0**) — 창 제목·헤더 우측에 표시.
+- **분석 모드 전환**: DTV / UHDTV / DMB 라디오 변경 시 **파일 선택 경로 초기화**(잘못된 조합 방지).
 - **테마**: 로데 프로모 그래픽에 가깝게 **딥 네이비 배경**, 헤더 **이중선형 블루 그라데이션**, 기술 **그리드**, `UHF` 워터마크, 우상단 **타깃** 장식, **스펙트럼 바**(흰·시안·오렌지 계열), 패널 **시안 글로우** 테두리, 로그는 다크 터미널 톤.
 - **frontend-design** 스킬(`.cursor/skills/frontend-design/SKILL.md`)을 참고해 **산업용·HUD** 느낌과 **악센트**를 맞춤.
 
@@ -115,6 +117,13 @@ python main.py
 - **`main.py` / `excel_handler.py` / `dmb_excel.py`**: 편차 파이프라인 연동, 사용자 메시지에 항목별 임계값 안내.
 - **GUI**: R&S 프로모 스타일 **다크 HUD** — 그라데이션 헤더, 그리드·워터마크·스펙트럼 바·시안 패널 테두리 등.
 - **`.cursor/skills/frontend-design/SKILL.md`**: Cursor Agent용 **frontend-design** 스킬을 프로젝트에 추가(선택 적용).
+
+### 2026-04-17 (후속: 시트명·편차·GUI·Excel 뷰)
+
+- **시트 이름**: 신규 시트 저장 시 **`YYYY_MM`** (기존 **`YYYY-MM`**·`YYYY_MM_n` 병행 시 `parse_sheet_title_date`로 1년 평균 구간 인식).
+- **편차(ROHDE)**: **I3(Reflected Power)** 는 1년 평균 대비 검사·빨간 글씨 **제외**(F3·AMP·특이사항 로직 유지).
+- **GUI**: 분석 모드(DTV/UHDTV/DMB) 전환 시 **파일 선택 경로 전부 초기화**. **`APP_VERSION` v1.0** — 창 제목·헤더에 표시.
+- **Excel 저장**: `_ensure_single_sheet_selected` — 저장 전 모든 시트 `tabSelected` 해제 후 활성 시트만 선택, `activeTab` 정렬. 재오픈 시 **시트 탭 그룹**으로 보이던 현상 완화.
 
 ---
 

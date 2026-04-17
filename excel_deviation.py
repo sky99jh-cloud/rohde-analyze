@@ -20,7 +20,7 @@ from excel_handler import (
 )
 
 _DEVIATION_THRESHOLD_DEFAULT = 0.2
-# FWD(F3), REF(I3), AMP Temp, 특이사항(Shoulder 등)은 50% 이상일 때만 알림
+# FWD(F3), AMP Temp, 특이사항(Shoulder 등)은 50% 이상일 때만 알림 (REF(I3)는 평균대비 검사 제외)
 _DEVIATION_THRESHOLD_STRICT = 0.5
 _FONT_RED = Font(color="FF0000")
 
@@ -30,8 +30,20 @@ def _normalize_sheet_title(title: str) -> str:
 
 
 def parse_sheet_title_date(title: str) -> datetime | None:
-    """시트 이름에서 날짜 추출 (YYYY-MM, YYYY-MM-DD, YYYY-MM_n, YYYY.M 등)."""
+    """시트 이름에서 날짜 추출 (YYYY_MM, YYYY_MM_n, YYYY-MM, YYYY-MM-DD, YYYY-MM_n, YYYY.M 등)."""
     t = _normalize_sheet_title(title)
+    m = re.match(r"^(\d{4})_(\d{2})_(\d+)$", t)
+    if m:
+        try:
+            return datetime(int(m.group(1)), int(m.group(2)), 1)
+        except ValueError:
+            return None
+    m = re.match(r"^(\d{4})_(\d{2})$", t)
+    if m:
+        try:
+            return datetime(int(m.group(1)), int(m.group(2)), 1)
+        except ValueError:
+            return None
     m = re.match(r"^(\d{4})-(\d{2})_(\d+)$", t)
     if m:
         try:
@@ -138,7 +150,7 @@ def apply_deviation_highlight(
 
     log(
         "  [평균 비교] 참조 시트 "
-        f"{len(historical)}개 (기본 20% / FWD·REF·AMP Temp·특이사항 50%)"
+        f"{len(historical)}개 (기본 20% / FWD·AMP Temp·특이사항 50%, REF(I3) 제외)"
     )
 
     alerts: list[str] = []
@@ -162,13 +174,11 @@ def apply_deviation_highlight(
 
 
 def collect_rohde_deviation_cells(sheet: Worksheet, parsed: dict) -> list[tuple[int, int, str, float]]:
-    """갱신된 숫자 셀 (F3, I3, AMP, DTV 특이사항 값) 좌표·라벨·임계값."""
+    """갱신된 숫자 셀 (F3, AMP, DTV 특이사항 값) 좌표·라벨·임계값. I3(REF)는 평균대비 검사 제외."""
     checks: list[tuple[int, int, str, float]] = []
 
     if parsed.get("forward_power") is not None:
         checks.append((3, 6, "F3 Forward Power", _DEVIATION_THRESHOLD_STRICT))
-    if parsed.get("reflected_power") is not None:
-        checks.append((3, 9, "I3 Reflected Power", _DEVIATION_THRESHOLD_STRICT))
 
     amp_count = int(parsed.get("amp_count", 2))
     amp_count = max(1, min(8, amp_count))

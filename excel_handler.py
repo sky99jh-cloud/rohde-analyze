@@ -10,6 +10,7 @@ from typing import Any
 
 import openpyxl
 from openpyxl import load_workbook
+from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 
@@ -122,6 +123,32 @@ def _copy_sheet(workbook: openpyxl.Workbook, source: Worksheet) -> Worksheet:
     idx = workbook.worksheets.index(target)
     workbook.move_sheet(target, offset=len(workbook.worksheets) - 1 - idx)
     return target
+
+
+def _ensure_single_sheet_selected(workbook: Workbook, active: Worksheet) -> None:
+    """
+    저장 시 시트 탭이 여러 개 선택(그룹)된 것처럼 열리지 않도록,
+    모든 시트의 tabSelected를 끄고 활성 시트만 선택 상태로 둔다.
+    """
+    sheets = workbook.worksheets
+    try:
+        idx = sheets.index(active)
+    except ValueError:
+        idx = max(0, len(sheets) - 1)
+    if workbook.views:
+        workbook.views[0].activeTab = idx
+    for ws in sheets:
+        views = getattr(ws, "views", None)
+        if not views or not getattr(views, "sheetView", None):
+            continue
+        for sv in views.sheetView:
+            if sv is not None:
+                sv.tabSelected = False
+    views = getattr(active, "views", None)
+    if views and views.sheetView:
+        for sv in views.sheetView:
+            if sv is not None:
+                sv.tabSelected = True
 
 
 def _make_unique_title(workbook: openpyxl.Workbook, base: str) -> str:
@@ -311,8 +338,8 @@ def _update_power_cells(sheet: Worksheet, parsed: dict) -> list[str]:
 # ── 시트 이름 갱신 (날짜 기반) ───────────────────────────────────────────────
 
 def _make_sheet_name(workbook: openpyxl.Workbook, created_on: datetime) -> str:
-    """연·월 기반 시트 이름(YYYY-MM). 동일 월에 여러 시트면 _1, _2 … 로 구분."""
-    base = created_on.strftime("%Y-%m")
+    """연·월 기반 시트 이름(YYYY_MM). 동일 월에 여러 시트면 _1, _2 … 로 구분."""
+    base = created_on.strftime("%Y_%m")
     existing = {ws.title for ws in workbook.worksheets}
     if base not in existing:
         return base
@@ -401,10 +428,12 @@ def update_excel(excel_path: str, parsed: dict, log_callback=None) -> tuple[str,
     ref_date = created_on or datetime.now()
     checks = collect_rohde_deviation_cells(new_sheet, parsed)
     if checks:
-        log("━━━ 1년 평균 대비 편차 검사 (FWD·REF·AMP Temp·특이 50% / 그 외 20%) ━━━")
+        log("━━━ 1년 평균 대비 편차 검사 (FWD·AMP Temp·특이 50% / 그 외 20%, REF(I3) 제외) ━━━")
         deviation_alerts = apply_deviation_highlight(
             workbook, new_sheet, ref_date, checks, log_callback=log
         )
+
+    _ensure_single_sheet_selected(workbook, new_sheet)
 
     # 저장
     workbook.save(excel_path)

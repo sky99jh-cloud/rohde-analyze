@@ -10,7 +10,7 @@ from typing import Any, Callable
 from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
-from excel_handler import _copy_sheet, _make_sheet_name
+from excel_handler import _copy_sheet, _ensure_single_sheet_selected, _make_sheet_name
 
 from excel_deviation import apply_deviation_highlight, collect_dmb_deviation_cells
 
@@ -116,6 +116,8 @@ def update_dmb_excel(
         deviation_alerts = apply_deviation_highlight(
             wb, new_sheet, ref_date, checks, log_callback=log
         )
+
+    _ensure_single_sheet_selected(wb, new_sheet)
 
     wb.save(excel_path)
     log(f"저장 완료: {excel_path}")
