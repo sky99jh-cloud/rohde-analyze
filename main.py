@@ -1,12 +1,14 @@
 """
 ROHDE 송신기 로그 분석기
-HTML 파라미터 스냅샷을 파싱하여 Excel 파일에 측정 데이터를 기록한다.
+HTML 파라미터 스냅샷 또는 DMB 텍스트 로그를 파싱하여 Excel에 측정 데이터를 기록한다.
 """
 
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
+from dmb_excel import update_dmb_excel
+from dmb_parser import detect_dmb_excel_kind, parse_dmb_log
 from excel_handler import detect_excel_tx_kind, update_excel
 from html_parser import detect_html_tx_kind, parse_html
 
@@ -28,21 +30,25 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("ROHDE 송신기 로그 분석기")
-        self.geometry("720x580")
-        self.minsize(600, 500)
+        self.geometry("720x640")
+        self.minsize(600, 540)
         self.configure(bg=BG_COLOR)
         self.resizable(True, True)
 
         self._html_path = tk.StringVar()
         self._excel_path = tk.StringVar()
+        self._txt_path = tk.StringVar()
+        self._excel_a_path = tk.StringVar()
+        self._excel_b_path = tk.StringVar()
         self._tx_mode = tk.StringVar(value="dtv")
 
         self._build_ui()
+        self._tx_mode.trace_add("write", self._on_mode_change)
+        self._on_mode_change()
 
     # ── UI 구성 ─────────────────────────────────────────────────────────────
 
     def _build_ui(self):
-        # 헤더
         header = tk.Frame(self, bg=ACCENT_COLOR, height=56)
         header.pack(fill="x")
         header.pack_propagate(False)
@@ -53,7 +59,6 @@ class App(tk.Tk):
             font=FONT_TITLE,
         ).pack(side="left", padx=20, pady=14)
 
-        # 메인 컨테이너
         main = tk.Frame(self, bg=BG_COLOR, padx=20, pady=16)
         main.pack(fill="both", expand=True)
 
@@ -66,24 +71,33 @@ class App(tk.Tk):
             mode_frame, text="DTV (AMP 2개)",
             variable=self._tx_mode, value="dtv",
             bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
-        ).pack(side="left", padx=(4, 20))
+        ).pack(side="left", padx=(4, 16))
         tk.Radiobutton(
             mode_frame, text="UHDTV (AMP 6개)",
             variable=self._tx_mode, value="uhdtv",
             bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+        ).pack(side="left", padx=(0, 16))
+        tk.Radiobutton(
+            mode_frame, text="DMB (TX-A / TX-B)",
+            variable=self._tx_mode, value="dmb",
+            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
         ).pack(side="left", padx=4)
 
-        # 파일 선택 프레임
         file_frame = tk.LabelFrame(
             main, text=" 파일 선택 ", bg=BG_COLOR,
             font=FONT_BOLD, fg=ACCENT_COLOR, padx=12, pady=10,
         )
         file_frame.pack(fill="x", pady=(0, 12))
 
-        self._add_file_row(file_frame, "HTML 파일 (로그):", self._html_path, "html", row=0)
-        self._add_file_row(file_frame, "Excel 파일 (결과지):", self._excel_path, "excel", row=1)
+        self._rohde_files = tk.Frame(file_frame, bg=BG_COLOR)
+        self._add_file_row(self._rohde_files, "HTML 파일 (로그):", self._html_path, "html", row=0)
+        self._add_file_row(self._rohde_files, "Excel 파일 (결과지):", self._excel_path, "excel", row=1)
 
-        # 실행 버튼
+        self._dmb_files = tk.Frame(file_frame, bg=BG_COLOR)
+        self._add_file_row(self._dmb_files, "로그 파일 (.txt):", self._txt_path, "dmb_txt", row=0)
+        self._add_file_row(self._dmb_files, "Excel TX-A:", self._excel_a_path, "dmb_a", row=1)
+        self._add_file_row(self._dmb_files, "Excel TX-B:", self._excel_b_path, "dmb_b", row=2)
+
         self._run_btn = tk.Button(
             main,
             text="▶  분석 및 Excel 저장",
@@ -97,11 +111,9 @@ class App(tk.Tk):
         self._run_btn.bind("<Enter>", lambda e: self._run_btn.config(bg=BTN_HOVER))
         self._run_btn.bind("<Leave>", lambda e: self._run_btn.config(bg=BTN_COLOR))
 
-        # 진행 상태 바
         self._progress = ttk.Progressbar(main, mode="indeterminate", length=300)
         self._progress.pack(fill="x", pady=(0, 8))
 
-        # 결과 로그
         log_frame = tk.LabelFrame(
             main, text=" 처리 결과 ", bg=BG_COLOR,
             font=FONT_BOLD, fg=ACCENT_COLOR,
@@ -118,11 +130,19 @@ class App(tk.Tk):
         )
         self._log_box.pack(fill="both", expand=True, padx=6, pady=6)
 
-        # 태그 색상 설정
         self._log_box.tag_config("info",    foreground="#89b4fa")
         self._log_box.tag_config("success", foreground="#a6e3a1")
         self._log_box.tag_config("error",   foreground="#f38ba8")
         self._log_box.tag_config("detail",  foreground="#a6adc8")
+
+    def _on_mode_change(self, *args):
+        mode = self._tx_mode.get()
+        if mode == "dmb":
+            self._rohde_files.pack_forget()
+            self._dmb_files.pack(fill="x")
+        else:
+            self._dmb_files.pack_forget()
+            self._rohde_files.pack(fill="x")
 
     def _add_file_row(self, parent, label_text, str_var, kind, row):
         tk.Label(parent, text=label_text, bg=BG_COLOR, font=FONT_NORMAL, width=20, anchor="w"
@@ -148,7 +168,6 @@ class App(tk.Tk):
     # ── 파일 탐색 ───────────────────────────────────────────────────────────
 
     def _html_matches_mode(self, path: str) -> bool:
-        """현재 분석 모드와 HTML 종류가 일치하면 True. 불일치·읽기 실패 시 경고 후 False."""
         try:
             file_kind = detect_html_tx_kind(path)
         except OSError as exc:
@@ -164,7 +183,6 @@ class App(tk.Tk):
         return True
 
     def _excel_matches_mode(self, path: str) -> bool:
-        """현재 분석 모드와 Excel 양식이 일치하면 True. 불일치·읽기 실패 시 경고 후 False."""
         try:
             file_kind = detect_excel_tx_kind(path)
         except Exception as exc:
@@ -187,13 +205,50 @@ class App(tk.Tk):
             )
             if path and self._html_matches_mode(path):
                 self._html_path.set(path)
-        else:
+        elif kind == "excel":
             path = filedialog.askopenfilename(
                 title="Excel 파일 선택",
                 filetypes=[("Excel 파일", "*.xlsx *.xlsm"), ("모든 파일", "*.*")],
             )
             if path and self._excel_matches_mode(path):
                 self._excel_path.set(path)
+        elif kind == "dmb_txt":
+            path = filedialog.askopenfilename(
+                title="DMB 로그 파일 선택",
+                filetypes=[("텍스트", "*.txt"), ("모든 파일", "*.*")],
+            )
+            if path:
+                self._txt_path.set(path)
+        elif kind == "dmb_a":
+            path = filedialog.askopenfilename(
+                title="DMB TX-A Excel 선택",
+                filetypes=[("Excel 파일", "*.xlsx *.xlsm"), ("모든 파일", "*.*")],
+            )
+            if path:
+                try:
+                    k = detect_dmb_excel_kind(path)
+                except Exception as exc:
+                    messagebox.showerror("파일 오류", f"Excel 파일을 읽을 수 없습니다.\n{exc}")
+                    return
+                if k != "txa":
+                    messagebox.showwarning("경고", "DMB TX-A Excel 파일을 선택해 주세요")
+                    return
+                self._excel_a_path.set(path)
+        elif kind == "dmb_b":
+            path = filedialog.askopenfilename(
+                title="DMB TX-B Excel 선택",
+                filetypes=[("Excel 파일", "*.xlsx *.xlsm"), ("모든 파일", "*.*")],
+            )
+            if path:
+                try:
+                    k = detect_dmb_excel_kind(path)
+                except Exception as exc:
+                    messagebox.showerror("파일 오류", f"Excel 파일을 읽을 수 없습니다.\n{exc}")
+                    return
+                if k != "txb":
+                    messagebox.showwarning("경고", "DMB TX-B Excel 파일을 선택해 주세요")
+                    return
+                self._excel_b_path.set(path)
 
     # ── 로그 출력 ───────────────────────────────────────────────────────────
 
@@ -211,33 +266,101 @@ class App(tk.Tk):
     # ── 실행 ────────────────────────────────────────────────────────────────
 
     def _on_run(self):
-        html_path  = self._html_path.get().strip()
-        excel_path = self._excel_path.get().strip()
+        mode = self._tx_mode.get()
 
-        if not html_path:
-            messagebox.showwarning("파일 미선택", "HTML 파일을 선택해 주세요.")
-            return
-        if not excel_path:
-            messagebox.showwarning("파일 미선택", "Excel 파일을 선택해 주세요.")
-            return
-        # HTML/Excel은 찾아보기에서 검증하지만, 분석 모드를 바꾼 뒤에도 불일치 가능
-        if not self._html_matches_mode(html_path):
-            return
-        if not self._excel_matches_mode(excel_path):
-            return
+        if mode == "dmb":
+            txt_path = self._txt_path.get().strip()
+            xa = self._excel_a_path.get().strip()
+            xb = self._excel_b_path.get().strip()
+            if not txt_path:
+                messagebox.showwarning("파일 미선택", "로그 파일(.txt)을 선택해 주세요.")
+                return
+            if not xa or not xb:
+                messagebox.showwarning("파일 미선택", "Excel TX-A와 TX-B 파일을 모두 선택해 주세요.")
+                return
+            try:
+                if detect_dmb_excel_kind(xa) != "txa":
+                    messagebox.showwarning("경고", "DMB TX-A Excel 파일을 선택해 주세요")
+                    return
+                if detect_dmb_excel_kind(xb) != "txb":
+                    messagebox.showwarning("경고", "DMB TX-B Excel 파일을 선택해 주세요")
+                    return
+            except Exception as exc:
+                messagebox.showerror("파일 오류", str(exc))
+                return
+        else:
+            html_path = self._html_path.get().strip()
+            excel_path = self._excel_path.get().strip()
+            if not html_path:
+                messagebox.showwarning("파일 미선택", "HTML 파일을 선택해 주세요.")
+                return
+            if not excel_path:
+                messagebox.showwarning("파일 미선택", "Excel 파일을 선택해 주세요.")
+                return
+            if not self._html_matches_mode(html_path):
+                return
+            if not self._excel_matches_mode(excel_path):
+                return
 
         self._run_btn.configure(state="disabled")
         self._log_clear()
         self._progress.start(12)
 
-        thread = threading.Thread(
-            target=self._run_task,
-            args=(html_path, excel_path),
-            daemon=True,
-        )
+        if mode == "dmb":
+            thread = threading.Thread(
+                target=self._run_task_dmb,
+                args=(self._txt_path.get().strip(), self._excel_a_path.get().strip(), self._excel_b_path.get().strip()),
+                daemon=True,
+            )
+        else:
+            thread = threading.Thread(
+                target=self._run_task_rohde,
+                args=(self._html_path.get().strip(), self._excel_path.get().strip()),
+                daemon=True,
+            )
         thread.start()
 
-    def _run_task(self, html_path: str, excel_path: str):
+    def _run_task_dmb(self, txt_path: str, excel_a: str, excel_b: str):
+        try:
+            self.after(0, self._log, "━━━ DMB 로그 파싱 ━━━", "info")
+            self.after(0, self._log, f"  파일: {txt_path}", "detail")
+
+            parsed = parse_dmb_log(txt_path)
+            co = parsed.get("created_on")
+            if co:
+                self.after(0, self._log, f"  로그 일자: {co.strftime('%Y-%m-%d')}", "success")
+
+            def on_log(msg: str):
+                self.after(0, self._log, msg, "detail")
+
+            self.after(0, self._log, "━━━ Excel TX-A (TX-1) ━━━", "info")
+            update_dmb_excel(excel_a, parsed, tx_num=1, log_callback=on_log)
+
+            self.after(0, self._log, "━━━ Excel TX-B (TX-2) ━━━", "info")
+            update_dmb_excel(excel_b, parsed, tx_num=2, log_callback=on_log)
+
+            self.after(0, self._log, "━━━ 완료 ━━━", "success")
+            self.after(0, self._log, f"  TX-A: {excel_a}", "success")
+            self.after(0, self._log, f"  TX-B: {excel_b}", "success")
+            self.after(
+                0,
+                messagebox.showinfo,
+                "완료",
+                f"Excel 두 파일이 저장되었습니다.\n\nTX-A:\n{excel_a}\n\nTX-B:\n{excel_b}",
+            )
+
+        except Exception as exc:
+            import traceback
+            tb = traceback.format_exc()
+            self.after(0, self._log, f"오류 발생: {exc}", "error")
+            self.after(0, self._log, tb, "error")
+            self.after(0, messagebox.showerror, "오류", f"처리 중 오류가 발생했습니다.\n\n{exc}")
+
+        finally:
+            self.after(0, self._progress.stop)
+            self.after(0, self._run_btn.configure, {"state": "normal"})
+
+    def _run_task_rohde(self, html_path: str, excel_path: str):
         try:
             self.after(0, self._log, "━━━ HTML 파싱 시작 ━━━", "info")
             self.after(0, self._log, f"  파일: {html_path}")
