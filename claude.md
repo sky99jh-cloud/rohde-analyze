@@ -14,7 +14,8 @@
 | 항목 | 내용 |
 |------|------|
 | 런타임 | Python 3 |
-| GUI | `tkinter` — 분석 모드 **DTV / UHDTV / DMB**, 파일 선택, 실행, 진행 표시, 로그 |
+| GUI | `tkinter` — 분석 모드 **DTV / UHDTV / DMB**, 파일 선택, 실행, 진행 표시, 로그, **R&S 스타일 다크 HUD** 테마 |
+| 편차 하이라이트 | `excel_deviation.py` — 최근 1년 시트 평균 대비 이탈 시 셀 빨간색·알림 (**기본 20%** / **FWD·REF·AMP Temp·특이사항 50%**) |
 | ROHDE HTML | `BeautifulSoup` + `lxml` — caption 기준 테이블; AMP 2 또는 6 |
 | DMB 로그 | 텍스트 파싱 — `tx-1`/`tx-2` × `pa1`~`pa5`, **digital** 줄(PWR_A 등) |
 | Excel | `openpyxl` — 시트 복사, 셀 갱신, 활성 시트·저장, 시트 확대 85% |
@@ -30,6 +31,8 @@
 | `excel_handler.py` | `update_excel`, `detect_excel_tx_kind` — ROHDE 마지막 시트 복제·갱신 |
 | `dmb_parser.py` | `parse_dmb_log`, `detect_dmb_excel_kind` — VM602 `.txt`, TX-A/B 엑셀 구분 |
 | `dmb_excel.py` | `update_dmb_excel` — DMB TX-A 또는 TX-B 워크북 한 파일씩 갱신 |
+| `excel_deviation.py` | 1년 평균 대비 편차 검사·빨간 글씨·알림 문구 수집 (`apply_deviation_highlight`, `collect_*`) |
+| `.cursor/skills/frontend-design/SKILL.md` | Cursor Agent용 UI 품질 가이드(선택) |
 | `requirements.txt` | `beautifulsoup4`, `lxml`, `openpyxl` |
 | `debug_excel.py` | Excel 마지막 시트 셀/병합 범위 확인용 보조 스크립트 |
 | `info.md` | 기능·매핑 규칙 요구사항 |
@@ -55,6 +58,8 @@
 
 5. **검증** — `detect_html_tx_kind`, `detect_excel_tx_kind`(찾아보기·실행 시).
 
+6. **편차(ROHDE)** — 이전 시트(최근 1년) 동일 셀 평균과 비교. **F3·I3·AMP Temp·특이사항**은 **50%** 이상, 그 외는 **20%** 이상일 때 빨간 글씨·완료 시 경고.
+
 ### DMB (TX-A / TX-B)
 
 - **로그 1개**(`*.txt`)에 `tx-1 pa1`…`pa5`, `tx-2 pa1`…`pa5` 블록; 각 블록에 **I_DRV** 줄·**digital** 줄.
@@ -62,6 +67,15 @@
 - **E2, G2, D21, D22**는 로그에 없음 → 새 시트에서 **비움**(수동 입력).
 - **F1/G1/H1** 로그 날짜 반영, 시트명·85% 확대는 ROHDE와 동일 계열.
 - **TX-A / TX-B** 엑셀은 `detect_dmb_excel_kind`(A1에 TX-A / TX-B)로 찾아보기 검증.
+
+- **편차(DMB)** — PA·digital 영역 등: **AMP Temp** 행만 **50%**, 나머지 **20%** 임계값.
+
+---
+
+## GUI (`main.py`)
+
+- **테마**: 로데 프로모 그래픽에 가깝게 **딥 네이비 배경**, 헤더 **이중선형 블루 그라데이션**, 기술 **그리드**, `UHF` 워터마크, 우상단 **타깃** 장식, **스펙트럼 바**(흰·시안·오렌지 계열), 패널 **시안 글로우** 테두리, 로그는 다크 터미널 톤.
+- **frontend-design** 스킬(`.cursor/skills/frontend-design/SKILL.md`)을 참고해 **산업용·HUD** 느낌과 **악센트**를 맞춤.
 
 ---
 
@@ -94,6 +108,13 @@ python main.py
 - `tx-1` → TX-A, `tx-2` → TX-B; **digital** 줄 기준으로 DIGITAL 영역(PWR_A 등) 매핑.
 - 복사된 새 시트에서 **E2, G2, D21, D22**는 **비움**(수동 입력용).
 - `claude.md` 본문에 DMB·파일 구성 반영.
+
+### 2026-04-17 (편차·GUI·스킬)
+
+- **`excel_deviation.py`**: ROHDE·DMB 엑셀에 대해 이전 시트(최근 1년) 평균 대비 편차 검사, 임계값 초과 셀 **빨간 글씨**, 완료 시 **경고/로그**. **FWD(F3)·REF(I3)·AMP Temp·특이사항**은 **50%**, 그 외 **20%**.
+- **`main.py` / `excel_handler.py` / `dmb_excel.py`**: 편차 파이프라인 연동, 사용자 메시지에 항목별 임계값 안내.
+- **GUI**: R&S 프로모 스타일 **다크 HUD** — 그라데이션 헤더, 그리드·워터마크·스펙트럼 바·시안 패널 테두리 등.
+- **`.cursor/skills/frontend-design/SKILL.md`**: Cursor Agent용 **frontend-design** 스킬을 프로젝트에 추가(선택 적용).
 
 ---
 

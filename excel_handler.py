@@ -324,7 +324,7 @@ def _make_sheet_name(workbook: openpyxl.Workbook, created_on: datetime) -> str:
 
 # ── 공개 함수 ────────────────────────────────────────────────────────────────
 
-def update_excel(excel_path: str, parsed: dict, log_callback=None) -> str:
+def update_excel(excel_path: str, parsed: dict, log_callback=None) -> tuple[str, list[str]]:
     """
     Excel 파일의 마지막 시트를 복사한 뒤 parsed 데이터로 셀을 갱신하고 저장한다.
 
@@ -336,8 +336,9 @@ def update_excel(excel_path: str, parsed: dict, log_callback=None) -> str:
 
     Returns
     -------
-    저장된 파일 경로
+    (저장된 파일 경로, 1년 평균 대비 임계값 이탈 항목 설명 리스트)
     """
+    from excel_deviation import apply_deviation_highlight, collect_rohde_deviation_cells
 
     def log(msg: str):
         if log_callback:
@@ -396,8 +397,17 @@ def update_excel(excel_path: str, parsed: dict, log_callback=None) -> str:
     new_sheet.sheet_view.zoomScale = 85
     log("표시 확대/축소: 85%")
 
+    deviation_alerts: list[str] = []
+    ref_date = created_on or datetime.now()
+    checks = collect_rohde_deviation_cells(new_sheet, parsed)
+    if checks:
+        log("━━━ 1년 평균 대비 편차 검사 (FWD·REF·AMP Temp·특이 50% / 그 외 20%) ━━━")
+        deviation_alerts = apply_deviation_highlight(
+            workbook, new_sheet, ref_date, checks, log_callback=log
+        )
+
     # 저장
     workbook.save(excel_path)
     log(f"저장 완료: {excel_path}")
 
-    return excel_path
+    return excel_path, deviation_alerts

@@ -12,6 +12,8 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from excel_handler import _copy_sheet, _make_sheet_name
 
+from excel_deviation import apply_deviation_highlight, collect_dmb_deviation_cells
+
 
 def _clear_manual_cells(sheet: Worksheet) -> list[str]:
     """로그에 없는 셀 — 수동 입력용으로 비움 (E2, G2, D21, D22)."""
@@ -69,9 +71,10 @@ def update_dmb_excel(
     parsed: dict[str, Any],
     tx_num: int,
     log_callback: Callable[[str], None] | None = None,
-) -> str:
+) -> tuple[str, list[str]]:
     """
     tx_num: 1 → DMB TX-A, 2 → DMB TX-B (`parsed['tx1']` / `parsed['tx2']`).
+    반환: (경로, 1년 평균 대비 임계값 이탈 항목 설명 리스트)
     """
     def log(msg: str) -> None:
         if log_callback:
@@ -105,6 +108,15 @@ def update_dmb_excel(
     new_sheet.sheet_view.zoomScale = 85
     log("표시 확대/축소: 85%")
 
+    deviation_alerts: list[str] = []
+    ref_date = created_on or datetime.now()
+    checks = collect_dmb_deviation_cells(new_sheet)
+    if checks:
+        log("━━━ 1년 평균 대비 편차 검사 (AMP Temp 50% / 그 외 20%) ━━━")
+        deviation_alerts = apply_deviation_highlight(
+            wb, new_sheet, ref_date, checks, log_callback=log
+        )
+
     wb.save(excel_path)
     log(f"저장 완료: {excel_path}")
-    return excel_path
+    return excel_path, deviation_alerts

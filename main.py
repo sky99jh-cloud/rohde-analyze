@@ -13,26 +13,39 @@ from excel_handler import detect_excel_tx_kind, update_excel
 from html_parser import detect_html_tx_kind, parse_html
 
 
-# ── 색상 / 폰트 상수 ────────────────────────────────────────────────────────
-BG_COLOR     = "#f0f2f5"
-ACCENT_COLOR = "#006599"
-BTN_COLOR    = "#0080bf"
-BTN_HOVER    = "#005f8f"
-TEXT_BG      = "#1e1e2e"
-TEXT_FG      = "#cdd6f4"
-FONT_NORMAL  = ("맑은 고딕", 10)
-FONT_BOLD    = ("맑은 고딕", 10, "bold")
-FONT_TITLE   = ("맑은 고딕", 14, "bold")
-FONT_MONO    = ("Consolas", 9)
+# ── R&S 프로모 스타일: 딥 블루 대기 + HUD 패널 + 시안 글로우 (frontend-design) ─
+APP_BG = "#040a10"
+PANEL_BG = "#0c1620"
+PANEL_BORDER = "#1a4a62"
+PANEL_GLOW = "#2ec4e8"
+ACCENT_CYAN = "#5dd5ff"
+ACCENT_CYAN_SOFT = "#3eb8dc"
+ACCENT_ORANGE = "#ff8c42"
+TEXT_PRIMARY = "#f2f8ff"
+TEXT_MUTED = "#7a9bb8"
+ENTRY_BG = "#050c14"
+LOG_BG = "#020810"
+LOG_FG = "#c5e4f5"
+BTN_PRIMARY = "#0088aa"
+BTN_HOVER = "#00a8cc"
+BTN_SECONDARY_BG = "#0f2535"
+BTN_SECONDARY_HOVER = "#153548"
+RADIO_SELECT = "#143044"
+FONT_UI = "Segoe UI"
+FONT_NORMAL = (FONT_UI, 10)
+FONT_BOLD = (FONT_UI, 10, "bold")
+FONT_TITLE = (FONT_UI, 16, "bold")
+FONT_SUB = (FONT_UI, 9)
+FONT_MONO = ("Consolas", 9)
 
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("ROHDE 송신기 로그 분석기")
-        self.geometry("720x640")
-        self.minsize(600, 540)
-        self.configure(bg=BG_COLOR)
+        self.geometry("800x700")
+        self.minsize(620, 540)
+        self.configure(bg=APP_BG)
         self.resizable(True, True)
 
         self._html_path = tk.StringVar()
@@ -42,58 +55,178 @@ class App(tk.Tk):
         self._excel_b_path = tk.StringVar()
         self._tx_mode = tk.StringVar(value="dtv")
 
+        self._setup_ttk_styles()
         self._build_ui()
         self._tx_mode.trace_add("write", self._on_mode_change)
         self._on_mode_change()
 
+    def _setup_ttk_styles(self) -> None:
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure(
+            "TProgressbar",
+            background=ACCENT_CYAN,
+            troughcolor="#0f2838",
+            borderwidth=0,
+            lightcolor=ACCENT_CYAN_SOFT,
+            darkcolor=ACCENT_CYAN,
+        )
+
     # ── UI 구성 ─────────────────────────────────────────────────────────────
 
-    def _build_ui(self):
-        header = tk.Frame(self, bg=ACCENT_COLOR, height=56)
-        header.pack(fill="x")
-        header.pack_propagate(False)
-        tk.Label(
-            header,
-            text="ROHDE 송신기 로그 분석기",
-            bg=ACCENT_COLOR, fg="white",
-            font=FONT_TITLE,
-        ).pack(side="left", padx=20, pady=14)
+    def _paint_header(self, _event=None) -> None:
+        c = self._header_canvas
+        w = max(c.winfo_width(), 2)
+        h = 100
+        c.delete("all")
+        # 좌·하단이 살짝 밝고 우·상단이 깊은 네이비 (캡처 느낌의 대각 기류)
+        c_tl = (0, 12, 28)
+        c_tr = (2, 8, 18)
+        c_bl = (12, 55, 82)
+        c_br = (4, 28, 45)
 
-        main = tk.Frame(self, bg=BG_COLOR, padx=20, pady=16)
+        def _pix(x: int, y: int) -> str:
+            tx, ty = x / max(w - 1, 1), y / max(h - 1, 1)
+            r = int(
+                c_tl[0] * (1 - tx) * (1 - ty)
+                + c_tr[0] * tx * (1 - ty)
+                + c_bl[0] * (1 - tx) * ty
+                + c_br[0] * tx * ty
+            )
+            g = int(
+                c_tl[1] * (1 - tx) * (1 - ty)
+                + c_tr[1] * tx * (1 - ty)
+                + c_bl[1] * (1 - tx) * ty
+                + c_br[1] * tx * ty
+            )
+            b = int(
+                c_tl[2] * (1 - tx) * (1 - ty)
+                + c_tr[2] * tx * (1 - ty)
+                + c_bl[2] * (1 - tx) * ty
+                + c_br[2] * tx * ty
+            )
+            return f"#{r:02x}{g:02x}{b:02x}"
+
+        step = 8
+        for y in range(0, h, step):
+            y2 = min(y + step, h)
+            for x in range(0, w, step):
+                x2 = min(x + step, w)
+                cx = min(x + step // 2, w - 1)
+                cy = min(y + step // 2, h - 1)
+                color = _pix(cx, cy)
+                c.create_rectangle(x, y, x2, y2, fill=color, outline=color, width=0)
+
+        # 기술 그리드 (저채도)
+        for gx in range(0, w, 28):
+            c.create_line(gx, 0, gx, h, fill="#1a3044", width=1)
+        for gy in range(0, h, 24):
+            c.create_line(0, gy, w, gy, fill="#152838", width=1)
+
+        # 워터마크 타이포 (배경 레이어)
+        c.create_text(
+            w * 0.52,
+            h * 0.55,
+            text="UHF",
+            anchor="center",
+            fill="#0d1f2e",
+            font=(FONT_UI, 42, "bold"),
+        )
+        c.create_text(
+            w * 0.52,
+            h * 0.92,
+            text="medium power",
+            anchor="s",
+            fill="#0a1824",
+            font=(FONT_UI, 11),
+        )
+
+        # 우상단 기술 아이콘 (동심원·타깃)
+        cx, cy = w - 48, 34
+        for ri, col in ((22, "#1e4058"), (15, "#2a5570"), (8, ACCENT_CYAN)):
+            c.create_oval(cx - ri, cy - ri, cx + ri, cy + ri, outline=col, width=1)
+        c.create_line(cx - 26, cy, cx + 26, cy, fill="#3a6a88", width=1)
+        c.create_line(cx, cy - 26, cx, cy + 26, fill="#3a6a88", width=1)
+
+        c.create_text(
+            24, 28, text="ROHDE 송신기 로그 분석기",
+            anchor="w", fill=TEXT_PRIMARY, font=FONT_TITLE,
+        )
+        c.create_text(
+            24, 58, text="Parameter snapshot → Excel workbook",
+            anchor="w", fill=TEXT_MUTED, font=FONT_SUB,
+        )
+
+        # 스펙트럼 바 (화이트 → 시안 → 오렌지·핑크)
+        bar_w = 3
+        for i in range(14):
+            bh = 14 + (i * 11) % 42
+            col = ("#f0f9ff", "#7dd3fc", ACCENT_CYAN, "#ffb37a", "#ff6eb4")[i % 5]
+            x0 = w - 28 - i * 6
+            if x0 < 300:
+                break
+            c.create_rectangle(x0, h - 8 - bh, x0 + bar_w, h - 6, fill=col, outline="")
+
+        c.create_line(0, h - 1, w, h - 1, fill=PANEL_GLOW, width=1)
+
+    def _build_ui(self) -> None:
+        accent_strip = tk.Frame(self, bg=PANEL_GLOW, height=3)
+        accent_strip.pack(fill="x")
+        accent_strip.pack_propagate(False)
+
+        self._header_canvas = tk.Canvas(self, height=100, highlightthickness=0, bd=0)
+        self._header_canvas.pack(fill="x")
+        self._header_canvas.bind("<Configure>", self._paint_header)
+
+        main = tk.Frame(self, bg=APP_BG, padx=22, pady=18)
         main.pack(fill="both", expand=True)
 
-        mode_frame = tk.LabelFrame(
-            main, text=" 분석 모드 ", bg=BG_COLOR,
-            font=FONT_BOLD, fg=ACCENT_COLOR, padx=12, pady=8,
-        )
+        lf_kw = {
+            "bg": PANEL_BG,
+            "font": FONT_BOLD,
+            "fg": ACCENT_CYAN,
+            "highlightbackground": PANEL_GLOW,
+            "highlightthickness": 1,
+            "labelanchor": "nw",
+        }
+        rb_kw = {
+            "bg": PANEL_BG,
+            "fg": TEXT_PRIMARY,
+            "font": FONT_NORMAL,
+            "anchor": "w",
+            "activebackground": PANEL_BG,
+            "activeforeground": ACCENT_CYAN,
+            "selectcolor": RADIO_SELECT,
+            "highlightthickness": 0,
+            "bd": 0,
+        }
+
+        mode_frame = tk.LabelFrame(main, text=" 분석 모드 ", padx=14, pady=10, **lf_kw)
         mode_frame.pack(fill="x", pady=(0, 10))
         tk.Radiobutton(
             mode_frame, text="DTV (AMP 2개)",
             variable=self._tx_mode, value="dtv",
-            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+            **rb_kw,
         ).pack(side="left", padx=(4, 16))
         tk.Radiobutton(
             mode_frame, text="UHDTV (AMP 6개)",
             variable=self._tx_mode, value="uhdtv",
-            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+            **rb_kw,
         ).pack(side="left", padx=(0, 16))
         tk.Radiobutton(
             mode_frame, text="DMB (TX-A / TX-B)",
             variable=self._tx_mode, value="dmb",
-            bg=BG_COLOR, font=FONT_NORMAL, anchor="w",
+            **rb_kw,
         ).pack(side="left", padx=4)
 
-        file_frame = tk.LabelFrame(
-            main, text=" 파일 선택 ", bg=BG_COLOR,
-            font=FONT_BOLD, fg=ACCENT_COLOR, padx=12, pady=10,
-        )
+        file_frame = tk.LabelFrame(main, text=" 파일 선택 ", padx=14, pady=12, **lf_kw)
         file_frame.pack(fill="x", pady=(0, 12))
 
-        self._rohde_files = tk.Frame(file_frame, bg=BG_COLOR)
+        self._rohde_files = tk.Frame(file_frame, bg=PANEL_BG)
         self._add_file_row(self._rohde_files, "HTML 파일 (로그):", self._html_path, "html", row=0)
         self._add_file_row(self._rohde_files, "Excel 파일 (결과지):", self._excel_path, "excel", row=1)
 
-        self._dmb_files = tk.Frame(file_frame, bg=BG_COLOR)
+        self._dmb_files = tk.Frame(file_frame, bg=PANEL_BG)
         self._add_file_row(self._dmb_files, "로그 파일 (.txt):", self._txt_path, "dmb_txt", row=0)
         self._add_file_row(self._dmb_files, "Excel TX-A:", self._excel_a_path, "dmb_a", row=1)
         self._add_file_row(self._dmb_files, "Excel TX-B:", self._excel_b_path, "dmb_b", row=2)
@@ -102,38 +235,57 @@ class App(tk.Tk):
             main,
             text="▶  분석 및 Excel 저장",
             command=self._on_run,
-            bg=BTN_COLOR, fg="white",
-            font=("맑은 고딕", 11, "bold"),
-            relief="flat", cursor="hand2",
-            padx=20, pady=8,
+            bg=BTN_PRIMARY,
+            fg="#ffffff",
+            font=(FONT_UI, 11, "bold"),
+            relief="flat",
+            cursor="hand2",
+            padx=24,
+            pady=10,
+            activebackground=BTN_HOVER,
+            activeforeground="#ffffff",
+            bd=0,
+            highlightthickness=1,
+            highlightbackground=ACCENT_ORANGE,
         )
         self._run_btn.pack(pady=(0, 12))
-        self._run_btn.bind("<Enter>", lambda e: self._run_btn.config(bg=BTN_HOVER))
-        self._run_btn.bind("<Leave>", lambda e: self._run_btn.config(bg=BTN_COLOR))
+        self._run_btn.bind(
+            "<Enter>",
+            lambda e: self._run_btn.config(bg=BTN_HOVER, fg="#ffffff"),
+        )
+        self._run_btn.bind(
+            "<Leave>",
+            lambda e: self._run_btn.config(bg=BTN_PRIMARY, fg="#ffffff"),
+        )
 
-        self._progress = ttk.Progressbar(main, mode="indeterminate", length=300)
+        self._progress = ttk.Progressbar(main, mode="indeterminate", length=320, style="TProgressbar")
         self._progress.pack(fill="x", pady=(0, 8))
 
-        log_frame = tk.LabelFrame(
-            main, text=" 처리 결과 ", bg=BG_COLOR,
-            font=FONT_BOLD, fg=ACCENT_COLOR,
-        )
+        log_frame = tk.LabelFrame(main, text=" 처리 결과 ", padx=8, pady=8, **lf_kw)
         log_frame.pack(fill="both", expand=True)
 
         self._log_box = scrolledtext.ScrolledText(
             log_frame,
-            bg=TEXT_BG, fg=TEXT_FG,
+            bg=LOG_BG,
+            fg=LOG_FG,
             font=FONT_MONO,
             state="disabled",
             relief="flat",
             wrap="word",
+            insertbackground=ACCENT_CYAN,
+            selectbackground="#1a4a62",
+            selectforeground=TEXT_PRIMARY,
+            highlightthickness=1,
+            highlightbackground=PANEL_BORDER,
         )
         self._log_box.pack(fill="both", expand=True, padx=6, pady=6)
 
-        self._log_box.tag_config("info",    foreground="#89b4fa")
-        self._log_box.tag_config("success", foreground="#a6e3a1")
-        self._log_box.tag_config("error",   foreground="#f38ba8")
-        self._log_box.tag_config("detail",  foreground="#a6adc8")
+        self._log_box.tag_config("info", foreground=ACCENT_CYAN)
+        self._log_box.tag_config("success", foreground="#6ee7b7")
+        self._log_box.tag_config("error", foreground="#fb7185")
+        self._log_box.tag_config("detail", foreground=TEXT_MUTED)
+
+        self.after_idle(self._paint_header)
 
     def _on_mode_change(self, *args):
         mode = self._tx_mode.get()
@@ -145,23 +297,52 @@ class App(tk.Tk):
             self._rohde_files.pack(fill="x")
 
     def _add_file_row(self, parent, label_text, str_var, kind, row):
-        tk.Label(parent, text=label_text, bg=BG_COLOR, font=FONT_NORMAL, width=20, anchor="w"
-                 ).grid(row=row, column=0, sticky="w", pady=4)
+        tk.Label(
+            parent,
+            text=label_text,
+            bg=PANEL_BG,
+            fg=TEXT_PRIMARY,
+            font=FONT_NORMAL,
+            width=20,
+            anchor="w",
+        ).grid(row=row, column=0, sticky="w", pady=4)
 
         entry = tk.Entry(
-            parent, textvariable=str_var, state="readonly",
-            relief="solid", font=FONT_NORMAL, width=46,
-            readonlybackground="white",
+            parent,
+            textvariable=str_var,
+            state="readonly",
+            relief="flat",
+            font=FONT_NORMAL,
+            width=46,
+            readonlybackground=ENTRY_BG,
+            fg=TEXT_PRIMARY,
+            highlightthickness=1,
+            highlightbackground=PANEL_BORDER,
+            highlightcolor=ACCENT_CYAN_SOFT,
+            bd=0,
         )
         entry.grid(row=row, column=1, padx=(6, 6), sticky="ew", pady=4)
 
         btn = tk.Button(
-            parent, text="찾아보기…",
+            parent,
+            text="찾아보기…",
             command=lambda k=kind: self._browse(k),
-            bg="#e0e4e8", relief="flat", font=FONT_NORMAL,
-            cursor="hand2", padx=8,
+            bg=BTN_SECONDARY_BG,
+            fg=TEXT_PRIMARY,
+            relief="flat",
+            font=FONT_NORMAL,
+            cursor="hand2",
+            padx=10,
+            pady=4,
+            activebackground=BTN_SECONDARY_HOVER,
+            activeforeground=ACCENT_CYAN,
+            bd=0,
+            highlightthickness=1,
+            highlightbackground=PANEL_BORDER,
         )
         btn.grid(row=row, column=2, pady=4)
+        btn.bind("<Enter>", lambda e: btn.config(bg=BTN_SECONDARY_HOVER))
+        btn.bind("<Leave>", lambda e: btn.config(bg=BTN_SECONDARY_BG))
 
         parent.columnconfigure(1, weight=1)
 
@@ -263,6 +444,28 @@ class App(tk.Tk):
         self._log_box.delete("1.0", "end")
         self._log_box.configure(state="disabled")
 
+    def _show_analysis_result(self, alerts: list[str], save_summary: str) -> None:
+        """1년 평균 대비 임계값 이탈 시 경고, 없으면 정상 메시지 (FWD·REF·AMP Temp·특이사항 50%, 그 외 20%)."""
+        if alerts:
+            for a in alerts:
+                self.after(0, self._log, f"  [편차] {a}", "error")
+            body = (
+                "다음 항목이 이전 시트(최근 1년) 평균 대비 임계값 이상 차이납니다 "
+                "(FWD·REF·AMP Temp·특이사항: 50%, 그 외: 20%). "
+                "해당 셀은 빨간색으로 표시되었습니다.\n\n"
+                + "\n".join(alerts)
+                + "\n\n"
+                + save_summary
+            )
+            self.after(0, messagebox.showwarning, "분석 완료 — 편차 알림", body)
+        else:
+            self.after(
+                0,
+                messagebox.showinfo,
+                "분석 완료",
+                "모든 데이터들이 정상적입니다.\n\n" + save_summary,
+            )
+
     # ── 실행 ────────────────────────────────────────────────────────────────
 
     def _on_run(self):
@@ -334,20 +537,18 @@ class App(tk.Tk):
                 self.after(0, self._log, msg, "detail")
 
             self.after(0, self._log, "━━━ Excel TX-A (TX-1) ━━━", "info")
-            update_dmb_excel(excel_a, parsed, tx_num=1, log_callback=on_log)
+            _, alerts_a = update_dmb_excel(excel_a, parsed, tx_num=1, log_callback=on_log)
 
             self.after(0, self._log, "━━━ Excel TX-B (TX-2) ━━━", "info")
-            update_dmb_excel(excel_b, parsed, tx_num=2, log_callback=on_log)
+            _, alerts_b = update_dmb_excel(excel_b, parsed, tx_num=2, log_callback=on_log)
 
             self.after(0, self._log, "━━━ 완료 ━━━", "success")
             self.after(0, self._log, f"  TX-A: {excel_a}", "success")
             self.after(0, self._log, f"  TX-B: {excel_b}", "success")
-            self.after(
-                0,
-                messagebox.showinfo,
-                "완료",
-                f"Excel 두 파일이 저장되었습니다.\n\nTX-A:\n{excel_a}\n\nTX-B:\n{excel_b}",
-            )
+
+            combined = [f"[TX-A] {x}" for x in alerts_a] + [f"[TX-B] {x}" for x in alerts_b]
+            save_summary = f"TX-A:\n{excel_a}\n\nTX-B:\n{excel_b}"
+            self.after(0, self._show_analysis_result, combined, save_summary)
 
         except Exception as exc:
             import traceback
@@ -392,11 +593,11 @@ class App(tk.Tk):
             def on_log(msg: str):
                 self.after(0, self._log, msg, "detail")
 
-            update_excel(excel_path, parsed, log_callback=on_log)
+            _, deviation_alerts = update_excel(excel_path, parsed, log_callback=on_log)
 
             self.after(0, self._log, "━━━ 완료 ━━━", "success")
             self.after(0, self._log, f"  저장 위치: {excel_path}", "success")
-            self.after(0, messagebox.showinfo, "완료", f"Excel 파일이 저장되었습니다.\n\n{excel_path}")
+            self.after(0, self._show_analysis_result, deviation_alerts, f"저장 파일:\n{excel_path}")
 
         except Exception as exc:
             import traceback
