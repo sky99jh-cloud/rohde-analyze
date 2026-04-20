@@ -130,6 +130,10 @@ python main.py
 - **테마 톤 조정**: 다크 HUD → 라이트 스카이 → 스틸 네이비 → **미드 네이비 HUD**로 단계 이동(`APP_BG #8eaec9`, `PANEL_BG #d7e2ee`, `ACCENT_CYAN #155f89` 등). 헤더 그라데이션·그리드·워터마크·타깃 동심원·스펙트럼 바·Progressbar·로그 박스 전부 새 팔레트에 맞춤.
 - **분석 모드 UI 전면 교체**: 작아 보이던 `tk.Radiobutton` 점 → **세그먼트 필 버튼**(`tk.Frame + tk.Label`). 선택 필은 `ACCENT_CYAN` 배경 + 흰 글자, 미선택은 라이트 톤 + 외곽선, hover 시 톤업. `self._mode_buttons` 저장, `_refresh_mode_buttons()`로 모드 변경·초기화 시 일괄 갱신. 기존 `self._tx_mode` StringVar·trace·파일 초기화 로직은 그대로 유지.
 
+### 2026-04-20 (DMB 시트 확대/축소)
+
+- **`dmb_excel.py`**: DMB 송신기 엑셀(TX-A / TX-B) 새 시트 추가·저장 시 시트 보기 확대/축소를 **85% → 100%** 로 조정(`new_sheet.sheet_view.zoomScale = 100`). 로그 문구도 `표시 확대/축소: 100%`로 갱신.
+
 ---
 
-*문서 작성일: 2026-04-17 · 마지막 갱신: 2026-04-17*
+*문서 작성일: 2026-04-17 · 마지막 갱신: 2026-04-20*

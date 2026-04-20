@@ -105,8 +105,8 @@ def update_dmb_excel(
     wb.active = new_sheet
     log(f"활성 시트: '{new_sheet.title}'")
 
-    new_sheet.sheet_view.zoomScale = 85
-    log("표시 확대/축소: 85%")
+    new_sheet.sheet_view.zoomScale = 100
+    log("표시 확대/축소: 100%")
 
     deviation_alerts: list[str] = []
     ref_date = created_on or datetime.now()
