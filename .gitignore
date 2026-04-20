@@ -8,6 +8,10 @@ __pycache__/
 venv/
 ENV/
 
+# PyInstaller
+build/
+dist/
+
 # IDE / OS
 .idea/
 .vscode/

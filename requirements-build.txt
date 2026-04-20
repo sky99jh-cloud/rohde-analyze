@@ -1,0 +1,2 @@
+# exe 빌드용 (PyInstaller). 런타임 의존성은 requirements.txt 참고.
+pyinstaller>=6.0,<7

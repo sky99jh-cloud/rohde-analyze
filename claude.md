@@ -34,6 +34,9 @@
 | `excel_deviation.py` | 1년 평균 대비 편차 검사·빨간 글씨·알림 문구 수집 (`apply_deviation_highlight`, `collect_*`) |
 | `.cursor/skills/frontend-design/SKILL.md` | Cursor Agent용 UI 품질 가이드(선택) |
 | `requirements.txt` | `beautifulsoup4`, `lxml`, `openpyxl` |
+| `requirements-build.txt` | PyInstaller — **exe** 빌드 시 추가 설치 |
+| `ROHDE_Analyzer.spec` | PyInstaller 설정(단일 exe, 콘솔 없음, `lxml` hidden import) |
+| `build_exe.ps1` | Windows에서 `dist\ROHDE_Analyzer.exe` 생성 스크립트 |
 | `debug_excel.py` | Excel 마지막 시트 셀/병합 범위 확인용 보조 스크립트 |
 | `info.md` | 기능·매핑 규칙 요구사항 |
 | `sample/` | HTML·ROHDE·DMB 예시 (`ParamSnapshot_*.html`, `D1TV_*`, `U1TV_*`, `20260323.txt`, `DMB_TX-*.xlsx` 등) |
@@ -88,6 +91,24 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Windows 실행 파일(.exe)
+
+[PyInstaller](https://pyinstaller.org/)로 **단일 exe**(`--onefile`, GUI 전용 `console=False`)를 만듭니다. 산출물: **`dist/ROHDE_Analyzer.exe`**.
+
+```bash
+pip install -r requirements.txt
+pip install -r requirements-build.txt
+pyinstaller ROHDE_Analyzer.spec
+```
+
+PowerShell(프로젝트 루트):
+
+```powershell
+.\build_exe.ps1
+```
+
+`build/`·`dist/`는 `.gitignore`에 두고, **소스만** 저장소에 올립니다. 배포 시 `dist\ROHDE_Analyzer.exe`만 복사하면 됩니다(첫 실행이 다소 느릴 수 있음).
+
 ---
 
 ## 참고
@@ -133,6 +154,13 @@ python main.py
 ### 2026-04-20 (DMB 시트 확대/축소)
 
 - **`dmb_excel.py`**: DMB 송신기 엑셀(TX-A / TX-B) 새 시트 추가·저장 시 시트 보기 확대/축소를 **85% → 100%** 로 조정(`new_sheet.sheet_view.zoomScale = 100`). 로그 문구도 `표시 확대/축소: 100%`로 갱신.
+
+### 2026-04-20 (Windows exe 빌드)
+
+- **PyInstaller**: `ROHDE_Analyzer.spec` — `main.py` 기준 단일 exe, 콘솔 창 없음, `lxml.etree`·`lxml._elementpath` hidden import.
+- **`requirements-build.txt`**: `pyinstaller` 버전 범위 명시.
+- **`build_exe.ps1`**: 의존성 설치 후 `pyinstaller ROHDE_Analyzer.spec` 실행, `dist\ROHDE_Analyzer.exe` 생성 확인.
+- **`.gitignore`**: `build/`, `dist/` 제외.
 
 ---
 
